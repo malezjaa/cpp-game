@@ -3,6 +3,8 @@
 #include <Camera2D.hpp>
 #include <memory>
 #include <unordered_map>
+
+#include "../ui/UIManager.h"
 enum class SceneType { Game, MainMenu };
 
 class Scene {
@@ -16,6 +18,7 @@ public:
 class SceneManager {
 public:
   void SwitchTo(SceneType);
+  UIManager &UI() { return ui_manager; }
   [[nodiscard]] Scene &CurrentScene() const;
   explicit SceneManager(const raylib::Camera2D &camera) : camera(camera) {}
 
@@ -23,6 +26,7 @@ private:
   std::unordered_map<SceneType, std::unique_ptr<Scene>> scenes{};
   SceneType current_scene = SceneType::MainMenu;
   raylib::Camera2D camera;
+  UIManager ui_manager{};
 };
 
 #endif

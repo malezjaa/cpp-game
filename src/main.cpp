@@ -10,6 +10,7 @@ int main() {
   Window::SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   Window window(screenWidth, screenHeight, "My game");
   SetExitKey(KEY_NULL);
+  SetTextLineSpacing(16);
 
   Camera2D camera{};
   camera.offset = {screenWidth / 2.0f, screenHeight / 2.0f};

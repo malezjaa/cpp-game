@@ -57,9 +57,7 @@ set(SOURCES src/main.cpp
         src/scenes/SceneManager.h
         src/scenes/MainMenu.cpp
         src/scenes/MainMenu.h
-        src/ui/TextRenderer.cpp
         src/ui/TextRenderer.h
-        src/ui/UIManager.cpp
         src/ui/UIManager.h
 )
 add_executable(${PROJECT_NAME} ${SOURCES})

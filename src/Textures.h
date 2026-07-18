@@ -20,10 +20,12 @@ public:
 
   [[nodiscard]] const Texture2D &Characters() const { return characters; }
   [[nodiscard]] const Texture2D &Tiles() const { return tiles; }
+  [[nodiscard]] const Texture2D &UI() const { return ui; }
 
 private:
   Texture2D characters{};
   Texture2D tiles{};
+  Texture2D ui{};
 };
 
 #endif

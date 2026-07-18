@@ -15,9 +15,7 @@ public:
   void DrawUI();
 
 private:
-  Textures textures;
   entt::registry registry;
-
   entt::entity player = entt::null;
   Camera2D &camera;
   SceneManager &scene_manager;

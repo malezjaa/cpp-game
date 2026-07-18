@@ -5,7 +5,6 @@
 #include "../ecs/systems.h"
 
 Game::Game(Camera2D &camera, SceneManager &scene_manager) : camera(camera), scene_manager(scene_manager) {
-  textures.Load();
   player = Player::CreateEntity(registry, Vector2{100.0f, 100.0f});
 }
 
@@ -25,6 +24,7 @@ void Game::Update() {
       pos.x + HALF_SPRITE_SIZE,
       pos.y + HALF_SPRITE_SIZE,
   };
+  camera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 }
 
 void Game::Draw() {
@@ -32,7 +32,7 @@ void Game::Draw() {
   ClearBackground(RAYWHITE);
 
   BeginMode2D(camera);
-  DrawAnimatedSprites(registry, textures);
+  DrawAnimatedSprites(registry, scene_manager.textures);
   EndMode2D();
 
   // hotbar.Draw();

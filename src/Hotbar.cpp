@@ -51,7 +51,6 @@ void Hotbar::Draw() {
     };
 
     DrawTexturePro(textures.Tiles(), Textures::INVENTORY_SLOT_RECT, rect, Vector2{0.0f, 0.0f}, 0.0f, WHITE);
-
     slot_x += slot_size - BORDER_THICKNESS;
   }
 }

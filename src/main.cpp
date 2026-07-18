@@ -1,6 +1,6 @@
-#include "Game.h"
 #include "Player.h"
 #include "raylib-cpp.hpp"
+#include "scenes/Game.h"
 using raylib::Window;
 
 int main() {
@@ -15,11 +15,12 @@ int main() {
   camera.offset = {screenWidth / 2.0f, screenHeight / 2.0f};
   camera.zoom = 1.0f;
 
-  Game game{camera};
+  SceneManager scene_manager(camera);
+  scene_manager.SwitchTo(SceneType::MainMenu);
 
   while (!Window::ShouldClose()) {
-    game.Update();
-    game.Draw();
+    scene_manager.CurrentScene().Update();
+    scene_manager.CurrentScene().Draw();
   }
 
   return 0;

@@ -1,10 +1,10 @@
 #include "Game.h"
 
-#include "Player.h"
-#include "ecs/Components.h"
-#include "ecs/systems.h"
+#include "../Player.h"
+#include "../ecs/Components.h"
+#include "../ecs/systems.h"
 
-Game::Game(const Camera2D &camera) : camera(camera) {
+Game::Game(Camera2D &camera, SceneManager &scene_manager) : camera(camera), scene_manager(scene_manager) {
   textures.Load();
   player = Player::CreateEntity(registry, Vector2{100.0f, 100.0f});
 }

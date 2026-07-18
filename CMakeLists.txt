@@ -38,8 +38,8 @@ find_package(EnTT CONFIG REQUIRED)
 set(SOURCES src/main.cpp
         src/Player.cpp
         src/Player.h
-        src/Game.cpp
-        src/Game.h
+        src/scenes/Game.cpp
+        src/scenes/Game.h
         src/Hotbar.cpp
         src/Hotbar.h
         src/items/Item.cpp
@@ -52,7 +52,12 @@ set(SOURCES src/main.cpp
         src/utils.h
         src/ecs/Components.h
         src/ecs/systems.cpp
-        src/ecs/systems.h)
+        src/ecs/systems.h
+        src/scenes/SceneManager.cpp
+        src/scenes/SceneManager.h
+        src/scenes/MainMenu.cpp
+        src/scenes/MainMenu.h
+)
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp EnTT::EnTT)
 

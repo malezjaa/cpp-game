@@ -58,8 +58,10 @@ set(SOURCES src/main.cpp
         src/scenes/MainMenu.cpp
         src/scenes/MainMenu.h
         src/ui/TextRenderer.h
+        src/ui/NineSlice.h
         src/ui/UIManager.h
+        src/scenes/Credits.h
 )
+
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp EnTT::EnTT)
-

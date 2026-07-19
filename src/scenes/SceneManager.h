@@ -24,7 +24,16 @@ public:
 
   [[nodiscard]] Scene &CurrentScene() const;
   explicit SceneManager(const Textures &textures, const raylib::Camera2D &camera) :
-      camera(camera), textures(textures), ui_manager(UIManager{textures}) {}
+      textures(textures), camera(camera), ui_manager(UIManager{textures}) {}
+
+  void Update() const { CurrentScene().Update(); }
+
+  void Draw() const {
+    BeginDrawing();
+    CurrentScene().Draw();
+    ui_manager.DrawAlerts();
+    EndDrawing();
+  }
 
 private:
   std::unordered_map<SceneType, std::unique_ptr<Scene>> scenes{};

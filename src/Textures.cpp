@@ -1,12 +1,8 @@
 #include "Textures.h"
 
 void Textures::Load() {
-  characters = LoadTexture("../assets/spritesheets/characters.png");
-  tiles = LoadTexture("../assets/spritesheets/tiles.png");
-  ui = LoadTexture("../assets/spritesheets/ui.png");
-}
-
-void Textures::Unload() const {
-  UnloadTexture(characters);
-  UnloadTexture(tiles);
+  characters.Load("../assets/spritesheets/characters.png");
+  tiles.Load("../assets/spritesheets/tiles.png");
+  ui.Load("../assets/spritesheets/ui.png");
+  ui2.Load("../assets/spritesheets/ui2.png");
 }

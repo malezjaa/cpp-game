@@ -28,16 +28,10 @@ void Game::Update() {
 }
 
 void Game::Draw() {
-  BeginDrawing();
   ClearBackground(RAYWHITE);
-
   BeginMode2D(camera);
   DrawAnimatedSprites(registry, scene_manager.textures);
   EndMode2D();
-
-  // hotbar.Draw();
-
-  EndDrawing();
 }
 
 void Game::DrawUI() {}

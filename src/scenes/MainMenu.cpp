@@ -5,7 +5,6 @@
 void MainMenu::Update() {}
 
 void MainMenu::Draw() {
-  BeginDrawing();
   ClearBackground(UIManager::BACKGROUND_COLOR);
 
   const float scale = UIManager::Scale();
@@ -27,7 +26,6 @@ void MainMenu::Draw() {
   scene_manager.UI().Text().Render(std::string{title}, title_position, title_size, GRAY);
 
   x += scene_manager.UI().Text().Measure(std::string{title}, title_size).x;
-
   x += 40.0f * scale;
 
   const float option_y = screen_height - 45.0f * scale;
@@ -40,6 +38,4 @@ void MainMenu::Draw() {
     x += scene_manager.UI().Text().Measure(name, option_size).x;
     x += option_gap;
   }
-
-  EndDrawing();
 }

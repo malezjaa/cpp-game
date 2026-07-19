@@ -21,10 +21,11 @@ int main() {
 
   SceneManager scene_manager(textures, camera);
   scene_manager.SwitchTo(SceneType::MainMenu);
+  scene_manager.UI().Alert("Hello!");
 
   while (!Window::ShouldClose()) {
-    scene_manager.CurrentScene().Update();
-    scene_manager.CurrentScene().Draw();
+    scene_manager.Update();
+    scene_manager.Draw();
   }
 
   return 0;

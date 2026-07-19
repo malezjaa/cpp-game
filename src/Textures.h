@@ -14,12 +14,14 @@ public:
 
   static constexpr Rectangle INVENTORY_SLOT_RECT = {195, 0, 64, 64};
 
-  static constexpr Rectangle ALERT_BACKGROUND_RECT{
+  static constexpr Rectangle DIALOG_BORDER_RECT{
       128.0f,
       131.0f,
       64.0f,
       76.0f,
   };
+
+  static constexpr Rectangle ALERT_BORDER_RECT{6.0f, 234.0f, 52.0f, 15.0f};
 
   static constexpr Rectangle ALERT_INFO_ICON_RECT{142.0f, 37.0f, 4.0f, 10.0f};
   static constexpr Rectangle ALERT_WARNING_ICON_RECT{142.0f, 54.0f, 4.0f, 10.0f};

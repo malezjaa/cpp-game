@@ -4,11 +4,36 @@
 #include "../ecs/Components.h"
 #include "../ecs/systems.h"
 
-Game::Game(Camera2D &camera, SceneManager &scene_manager) : camera(camera), scene_manager(scene_manager) {
+Game::Game(Camera2D &camera, SceneManager &scene_manager) :
+    camera(camera), scene_manager(scene_manager), menu(std::vector<Menu::Option>{
+                                                      {
+                                                          "Continue",
+                                                          [this] { this->state = GameState::Playing; },
+                                                      },
+                                                      {
+                                                          "Quit",
+                                                          [this] { this->scene_manager.UI().ShowQuitDialog(); },
+                                                      },
+                                                  }) {
   player = Player::CreateEntity(registry, Vector2{100.0f, 100.0f});
 }
 
 void Game::Update() {
+  if (IsKeyPressed(KEY_ESCAPE)) {
+    state = state == GameState::Paused ? GameState::Playing : GameState::Paused;
+  }
+
+  switch (state) {
+    case GameState::Playing:
+      UpdateGame();
+      break;
+
+    case GameState::Paused:
+      break;
+  }
+}
+
+void Game::UpdateGame() {
   const float deltaTime = GetFrameTime();
 
   UpdatePlayerInput(registry);
@@ -32,6 +57,24 @@ void Game::Draw() {
   BeginMode2D(camera);
   DrawAnimatedSprites(registry, scene_manager.textures);
   EndMode2D();
+
+  DrawUI();
 }
 
-void Game::DrawUI() {}
+void Game::DrawGameUI() {}
+void Game::DrawPauseMenuUI() {
+  DrawRectangleGradientV(0, 0, GetScreenWidth(), GetScreenHeight(), {0, 0, 0, 0}, {0, 0, 0, 180});
+  scene_manager.UI().DrawMenu(menu);
+}
+
+void Game::DrawUI() {
+  switch (state) {
+    case GameState::Playing:
+      DrawGameUI();
+      break;
+
+    case GameState::Paused:
+      DrawPauseMenuUI();
+      break;
+  }
+}

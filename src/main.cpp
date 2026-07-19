@@ -8,7 +8,7 @@ int main() {
   constexpr int screenHeight = UIManager::base_height;
 
   Window::SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_FULLSCREEN_MODE);
-  Window window(screenWidth, screenHeight, "My game");
+  Window window(screenWidth, screenHeight, "paradigm");
   SetExitKey(KEY_NULL);
   SetTextLineSpacing(16);
 
@@ -21,7 +21,6 @@ int main() {
 
   SceneManager scene_manager(textures, camera);
   scene_manager.SwitchTo(SceneType::MainMenu);
-  scene_manager.UI().Alert("Hello!");
 
   while (!Window::ShouldClose()) {
     scene_manager.Update();

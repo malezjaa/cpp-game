@@ -1,11 +1,17 @@
 #ifndef INC_2D_GAME_UIMANAGER_H
 #define INC_2D_GAME_UIMANAGER_H
+#include <algorithm>
+#include <cmath>
+#include <optional>
+#include <string>
+#include <utility>
 #include <vector>
-#include "../Textures.h"
-#include "NineSlice.h"
-#include "TextRenderer.h"
 
-enum class AlertLevel { Info, Warning, Error };
+#include "../Textures.h"
+#include "Alert.h"
+#include "Dialog.h"
+#include "Menu.h"
+#include "TextRenderer.h"
 
 class UIManager {
 public:
@@ -15,12 +21,6 @@ public:
 
   static constexpr float base_width = 800.0f;
   static constexpr float base_height = 450.0f;
-
-  static constexpr float ALERT_SLIDE_DURATION = 0.35f;
-  static constexpr float ALERT_WIDTH = 220.0f;
-  static constexpr float ALERT_HEIGHT = 35.0f;
-  static constexpr float ALERT_MARGIN = 14.0f;
-  static constexpr float ALERT_SPACING = 8.0f;
 
   explicit UIManager(const Textures &textures) : text("../assets/fonts/BoldPixels.ttf"), textures(textures) {}
 
@@ -41,99 +41,54 @@ public:
   }
 
   void Alert(const std::string &message, const AlertLevel level = AlertLevel::Info, const float duration = 3.0f) const {
-    alerts.push_back({message, level, duration, GetTime()});
+    alerts.Show(message, level, duration);
   }
 
-  void DrawAlerts() const {
-    const float scale = Scale();
-    const auto screen_w = static_cast<float>(GetScreenWidth());
-    float y = ALERT_MARGIN * scale;
+  void DrawAlerts() const { alerts.Draw(text, textures, Scale()); }
 
-    for (auto it = alerts.begin(); it != alerts.end();) {
-      const double elapsed = GetTime() - it->start_time;
+  void DrawMenu(const Menu &menu) const { menu.Draw(text, Scale(), TEXT_COLOR, HOVERED_TEXT_COLOR); }
 
-      if (const float total_duration = ALERT_SLIDE_DURATION * 2.0f + it->duration; elapsed >= total_duration) {
-        it = alerts.erase(it);
-        continue;
-      }
+  void ShowDialog(std::string message, std::vector<Dialog::Button> buttons = {}) const {
+    dialog.emplace(std::move(message), std::nullopt, std::move(buttons));
+  }
 
-      const float width = ALERT_WIDTH * scale;
-      const float height = ALERT_HEIGHT * scale;
+  void ShowDialog(std::string title, std::string message, std::vector<Dialog::Button> buttons = {}) const {
+    dialog.emplace(std::move(message), std::move(title), std::move(buttons));
+  }
 
-      float progress;
+  void ShowQuitDialog() const {
+    ShowDialog("Quit game?", "Are you sure you want to quit?",
+               {{"Cancel", {}}, {"Quit", [] { CloseWindow(); }, Textures::ALERT_WARNING_ICON_RECT}});
+  }
 
-      if (elapsed < ALERT_SLIDE_DURATION) {
-        progress = EaseOutCubic(static_cast<float>(elapsed) / ALERT_SLIDE_DURATION);
-      } else if (elapsed < ALERT_SLIDE_DURATION + it->duration) {
-        progress = 1.0f;
-      } else {
-        const float t = (static_cast<float>(elapsed) - ALERT_SLIDE_DURATION - it->duration) / ALERT_SLIDE_DURATION;
+  void CloseDialog() const { dialog.reset(); }
 
-        progress = 1.0f - EaseOutCubic(t);
-      }
+  [[nodiscard]] bool HasDialog() const { return dialog.has_value(); }
 
-      const float x = screen_w - progress * (width + ALERT_MARGIN * scale);
-
-      const Rectangle box{x, y, width, height};
-
-      NineSlice::Draw(textures.UI(), Textures::ALERT_BACKGROUND_RECT, box, {10.0f, 10.0f, 10.0f, 10.0f});
-
-      constexpr float ALERT_FONT_SIZE = 10.0f;
-      const float font_size = ALERT_FONT_SIZE * scale;
-      const Vector2 text_size = text.Measure(it->message, font_size);
-      constexpr float ALERT_ICON_WIDTH = 4.0f;
-      constexpr float ALERT_ICON_HEIGHT = 10.0f;
-
-      const Rectangle icon_rect{
-          x + 10.0f * scale,
-          y + (height - ALERT_ICON_HEIGHT * scale) / 2.0f,
-          ALERT_ICON_WIDTH * scale,
-          ALERT_ICON_HEIGHT * scale,
-      };
-      DrawTexturePro(textures.UI2(), LevelIconRect(it->level), icon_rect, {}, 0.0f, WHITE);
-
-      const Vector2 text_pos{
-          icon_rect.x + icon_rect.width + 8.0f * scale,
-          y + (height - text_size.y) / 2.0f,
-      };
-
-      text.Render(it->message, text_pos, font_size);
-
-      y += height + ALERT_SPACING * scale;
-      ++it;
+  void DrawDialog() const {
+    if (!dialog.has_value()) {
+      return;
     }
+
+    const std::optional<std::size_t> selected_button =
+        dialog->Draw(text, textures, Scale(), TEXT_COLOR, HOVERED_TEXT_COLOR);
+    if (!selected_button.has_value()) {
+      return;
+    }
+
+    const Dialog selected_dialog = std::move(*dialog);
+    dialog.reset();
+    selected_dialog.Trigger(*selected_button);
   }
 
   [[nodiscard]] TextRenderer &Text() { return text; }
   [[nodiscard]] const TextRenderer &Text() const { return text; }
 
 private:
-  struct ActiveAlert {
-    std::string message;
-    AlertLevel level;
-    float duration;
-    double start_time;
-  };
-
-  [[nodiscard]] static float EaseOutCubic(const float t) {
-    const float f = t - 1.0f;
-    return f * f * f + 1.0f;
-  }
-
-  [[nodiscard]] static Rectangle LevelIconRect(const AlertLevel level) {
-    switch (level) {
-      case AlertLevel::Warning:
-        return Textures::ALERT_WARNING_ICON_RECT;
-      case AlertLevel::Error:
-        return Textures::ALERT_ERROR_ICON_RECT;
-      default:
-        return Textures::ALERT_INFO_ICON_RECT;
-    }
-  }
-
   TextRenderer text;
   const Textures &textures;
-  mutable std::vector<ActiveAlert> alerts;
+  mutable AlertManager alerts;
+  mutable std::optional<Dialog> dialog;
 };
 
 #endif

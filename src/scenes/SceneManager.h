@@ -32,6 +32,7 @@ public:
     BeginDrawing();
     CurrentScene().Draw();
     ui_manager.DrawAlerts();
+    ui_manager.DrawDialog();
     EndDrawing();
   }
 

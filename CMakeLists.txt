@@ -33,6 +33,31 @@ if (NOT raylib_cpp_FOUND)
     FetchContent_MakeAvailable(raylib_cpp)
 endif ()
 
+FetchContent_Declare(
+        imgui
+        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_TAG v1.92.7
+        GIT_SHALLOW TRUE
+)
+
+# raylib backend for Dear ImGui
+FetchContent_Declare(
+        rlimgui
+        GIT_REPOSITORY https://github.com/raylib-extras/rlImGui.git
+        GIT_TAG Raylib_6_0
+        GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(imgui rlimgui)
+
+FetchContent_Declare(
+        magic_enum
+        GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
+        GIT_TAG v0.9.8
+)
+
+FetchContent_MakeAvailable(magic_enum)
+
 find_package(EnTT CONFIG REQUIRED)
 
 set(SOURCES src/main.cpp
@@ -61,7 +86,46 @@ set(SOURCES src/main.cpp
         src/ui/NineSlice.h
         src/ui/UIManager.h
         src/scenes/Credits.h
+        src/world/World.h
+        src/world/map.h
+        src/world/tiles.h
+        src/world/World.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp EnTT::EnTT)
+
+add_library(imgui STATIC
+        ${imgui_SOURCE_DIR}/imgui.cpp
+        ${imgui_SOURCE_DIR}/imgui_demo.cpp
+        ${imgui_SOURCE_DIR}/imgui_draw.cpp
+        ${imgui_SOURCE_DIR}/imgui_tables.cpp
+        ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+)
+
+target_include_directories(imgui
+        PUBLIC
+        ${imgui_SOURCE_DIR}
+)
+
+add_library(rlimgui STATIC
+        ${rlimgui_SOURCE_DIR}/rlImGui.cpp
+)
+
+target_include_directories(rlimgui
+        PUBLIC
+        ${rlimgui_SOURCE_DIR}
+)
+
+target_link_libraries(rlimgui
+        PUBLIC
+        imgui
+        raylib
+)
+
+target_link_libraries(2d_game PRIVATE
+        raylib
+        raylib_cpp
+        EnTT::EnTT
+        rlimgui
+        magic_enum::magic_enum
+)

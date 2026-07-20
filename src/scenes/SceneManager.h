@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "../ui/UIManager.h"
+#include "rlImGui.h"
 enum class SceneType { Game, MainMenu };
 
 class Scene {
@@ -26,21 +27,16 @@ public:
   explicit SceneManager(const Textures &textures, const raylib::Camera2D &camera) :
       textures(textures), camera(camera), ui_manager(UIManager{textures}) {}
 
-  void Update() const { CurrentScene().Update(); }
-
-  void Draw() const {
-    BeginDrawing();
-    CurrentScene().Draw();
-    ui_manager.DrawAlerts();
-    ui_manager.DrawDialog();
-    EndDrawing();
-  }
+  void Update();
+  void DrawDevTools();
+  void Draw();
 
 private:
   std::unordered_map<SceneType, std::unique_ptr<Scene>> scenes{};
   SceneType current_scene = SceneType::MainMenu;
   raylib::Camera2D camera;
   UIManager ui_manager;
+  bool show_dev_tools = false;
 };
 
 #endif

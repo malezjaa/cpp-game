@@ -4,6 +4,7 @@
 
 #include "../Player.h"
 #include "../ui/Menu.h"
+#include "../world/World.h"
 #include "SceneManager.h"
 
 enum class GameState { Playing, Paused };
@@ -27,6 +28,7 @@ private:
   SceneManager &scene_manager;
   GameState state = GameState::Playing;
   Menu menu;
+  World world;
 };
 
 

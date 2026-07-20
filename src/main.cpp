@@ -4,6 +4,8 @@
 using raylib::Window;
 
 int main() {
+  rlImGuiSetup(true);
+
   constexpr int screenWidth = UIManager::base_width;
   constexpr int screenHeight = UIManager::base_height;
 
@@ -26,6 +28,7 @@ int main() {
     scene_manager.Update();
     scene_manager.Draw();
   }
+  rlImGuiShutdown();
 
   return 0;
 }

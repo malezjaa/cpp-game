@@ -15,6 +15,8 @@ Game::Game(Camera2D &camera, SceneManager &scene_manager) :
                                                           [this] { this->scene_manager.UI().ShowQuitDialog(); },
                                                       },
                                                   }) {
+  world.InitializeMaps();
+
   player = Player::CreateEntity(registry, Vector2{100.0f, 100.0f});
 }
 

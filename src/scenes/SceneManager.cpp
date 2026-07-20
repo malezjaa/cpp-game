@@ -1,7 +1,11 @@
 #include "SceneManager.h"
 
+#include <format>
+
+#include <magic_enum/magic_enum.hpp>
 #include "Game.h"
 #include "MainMenu.h"
+#include "imgui.h"
 
 Scene &SceneManager::CurrentScene() const { return *scenes.at(current_scene); }
 
@@ -21,4 +25,36 @@ void SceneManager::SwitchTo(const SceneType type) {
   }
 
   current_scene = type;
+}
+
+void SceneManager::Update() {
+  if (IsKeyPressed(KEY_F11)) {
+    show_dev_tools = !show_dev_tools;
+  }
+  CurrentScene().Update();
+}
+
+void SceneManager::DrawDevTools() {
+  ImGui::Begin("Developer Tools");
+  ImGui::Text("FPS: %d", GetFPS());
+  const auto name = magic_enum::enum_name(current_scene);
+  ImGui::Text("Scene: %.*s", static_cast<int>(name.size()), name.data());
+  ImGui::End();
+}
+
+void SceneManager::Draw() {
+  BeginDrawing();
+  rlImGuiBegin();
+
+  if (show_dev_tools) {
+    DrawDevTools();
+  }
+
+  {
+    CurrentScene().Draw();
+    ui_manager.DrawAlerts();
+    ui_manager.DrawDialog();
+  }
+  rlImGuiEnd();
+  EndDrawing();
 }

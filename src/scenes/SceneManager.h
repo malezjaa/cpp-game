@@ -31,6 +31,8 @@ public:
   void DrawDevTools();
   void Draw();
 
+  bool dev_tools() const { return show_dev_tools; }
+
 private:
   std::unordered_map<SceneType, std::unique_ptr<Scene>> scenes{};
   SceneType current_scene = SceneType::MainMenu;

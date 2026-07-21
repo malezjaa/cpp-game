@@ -1,8 +1,11 @@
 #include "Game.h"
 
+#include <magic_enum/magic_enum.hpp>
+
 #include "../Player.h"
 #include "../ecs/Components.h"
 #include "../ecs/systems.h"
+#include "imgui.h"
 
 Game::Game(Camera2D &camera, SceneManager &scene_manager) :
     camera(camera), scene_manager(scene_manager), menu(std::vector<Menu::Option>{
@@ -60,10 +63,18 @@ void Game::Draw() {
   DrawAnimatedSprites(registry, scene_manager.textures);
   EndMode2D();
 
+  if (scene_manager.dev_tools()) {
+    const auto &[pos] = registry.get<Position>(player);
+    ImGui::Begin("Player");
+    ImGui::Text("Coordinates: (%.2f, %.2f)", pos.x, pos.y);
+    ImGui::End();
+  }
+
   DrawUI();
 }
 
 void Game::DrawGameUI() {}
+
 void Game::DrawPauseMenuUI() {
   DrawRectangleGradientV(0, 0, GetScreenWidth(), GetScreenHeight(), {0, 0, 0, 0}, {0, 0, 0, 180});
   scene_manager.UI().DrawMenu(menu);

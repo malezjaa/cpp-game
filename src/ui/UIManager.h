@@ -81,6 +81,35 @@ public:
     selected_dialog.Trigger(*selected_button);
   }
 
+  static bool IconButton(const raylib::Texture2D &texture, const Rectangle source, const Vector2 position,
+                         const Vector2 size = {}, const float rotation = 0.0f) {
+    const Vector2 buttonSize{size.x == 0.0f ? std::abs(source.width) : size.x,
+                             size.y == 0.0f ? std::abs(source.height) : size.y};
+
+    const Vector2 origin{buttonSize.x / 2.0f, buttonSize.y / 2.0f};
+
+    const Rectangle destination{position.x, position.y, buttonSize.x, buttonSize.y};
+
+    const Vector2 mouse = GetMousePosition();
+
+    const float relativeX = mouse.x - position.x;
+    const float relativeY = mouse.y - position.y;
+
+    const float radians = -rotation * DEG2RAD;
+    const float cosAngle = std::cos(radians);
+    const float sinAngle = std::sin(radians);
+
+    const Vector2 localMouse{relativeX * cosAngle - relativeY * sinAngle + origin.x,
+                             relativeX * sinAngle + relativeY * cosAngle + origin.y};
+
+    const bool hovered =
+        localMouse.x >= 0.0f && localMouse.x <= buttonSize.x && localMouse.y >= 0.0f && localMouse.y <= buttonSize.y;
+
+    DrawTexturePro(texture, source, destination, origin, rotation, hovered ? HOVERED_TEXT_COLOR : TEXT_COLOR);
+
+    return hovered && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+  }
+
   [[nodiscard]] TextRenderer &Text() { return text; }
   [[nodiscard]] const TextRenderer &Text() const { return text; }
 

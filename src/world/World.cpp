@@ -1,3 +1,3 @@
 #include "World.h"
 
-void World::InitializeMaps() {}
+void World::InitializeMap() {}

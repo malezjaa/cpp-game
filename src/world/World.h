@@ -6,13 +6,12 @@
 
 class World {
 public:
-  void LoadMap(MapId id);
+  void LoadMap();
   void Update(float dt);
   void Draw();
-  void InitializeMaps();
+  void InitializeMap();
 
 private:
-  MapId current_map;
-  std::unordered_map<MapId, Map> maps;
+  Map map;
 };
 #endif

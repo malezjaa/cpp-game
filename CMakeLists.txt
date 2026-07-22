@@ -90,6 +90,10 @@ set(SOURCES src/main.cpp
         src/world/map.h
         src/world/tiles.h
         src/world/World.cpp
+        src/ui/Alert.cpp
+        src/ui/Dialog.cpp
+        src/ui/Menu.cpp
+        src/ui/NineSlice.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

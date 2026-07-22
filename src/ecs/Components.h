@@ -23,6 +23,12 @@ struct Health {
   int maximum = 100;
 };
 
+struct MoveTarget {
+  Vector2 target;
+  float speed;
+  float stopDistance = 2.0f;
+};
+
 struct PlayerControlled {};
 
 enum class AnimationState : std::uint8_t {

@@ -69,3 +69,56 @@ void DrawAnimatedSprites(entt::registry &registry, const Textures &textures) {
     DrawTexturePro(textures.Characters(), source, destination, Vector2{}, 0.0f, WHITE);
   }
 }
+
+void UpdateWalkTarget(entt::registry &registry, const float deltaTime) {
+  std::vector<entt::entity> arrived;
+
+  const auto view = registry.view<Position, Velocity, MoveTarget>();
+
+  for (const entt::entity entity: view) {
+    const auto &[pos] = view.get<Position>(entity);
+    auto &[velocity] = view.get<Velocity>(entity);
+    const auto &[target, speed, stopDistance] = view.get<MoveTarget>(entity);
+
+    const Vector2 offset{
+        target.x - pos.x,
+        target.y - pos.y,
+    };
+
+    const float distance = Vector2Length(offset);
+
+    if (distance <= stopDistance) {
+      velocity = {};
+      arrived.push_back(entity);
+      continue;
+    }
+
+    const float maximumSpeedWithoutOvershooting = distance / deltaTime;
+    const float actualSpeed = std::min(speed, maximumSpeedWithoutOvershooting);
+
+    velocity = Vector2Scale(Vector2Normalize(offset), actualSpeed);
+  }
+
+  for (const entt::entity entity: arrived) {
+    registry.remove<MoveTarget>(entity);
+  }
+}
+
+void UpdateMovementAnimations(entt::registry &registry) {
+  const auto view = registry.view<Velocity, AnimatedSprite>();
+
+  for (const entt::entity entity: view) {
+    const auto &[velocity] = view.get<Velocity>(entity);
+    auto &sprite = view.get<AnimatedSprite>(entity);
+
+    const bool moving = velocity.x != 0.0f || velocity.y != 0.0f;
+
+    SetAnimationState(sprite, moving ? AnimationState::Walking : AnimationState::Idle);
+
+    if (velocity.x < 0.0f) {
+      sprite.facing = FacingDirection::Left;
+    } else if (velocity.x > 0.0f) {
+      sprite.facing = FacingDirection::Right;
+    }
+  }
+}

@@ -41,8 +41,10 @@ void Game::Update() {
 void Game::UpdateGame() {
   const float deltaTime = GetFrameTime();
 
+  UpdateWalkTarget(registry, deltaTime);
   UpdatePlayerInput(registry);
   UpdateMovement(registry, deltaTime);
+  UpdateMovementAnimations(registry);
   UpdateAnimations(registry, deltaTime);
 
   const auto &[pos] = registry.get<Position>(player);

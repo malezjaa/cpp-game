@@ -21,10 +21,9 @@ int main() {
 
   Camera2D camera{};
   camera.offset = {screenWidth / 2.0f, screenHeight / 2.0f};
-  camera.zoom = 1.0f;
+  camera.zoom = 3.0f;
 
   Textures textures{};
-  textures.Load();
 
   SceneManager scene_manager(textures, camera);
   scene_manager.SwitchTo(SceneType::MainMenu);

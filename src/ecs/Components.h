@@ -35,30 +35,40 @@ enum class AnimationState : std::uint8_t {
   Idle,
   Walking,
   Running,
+  Pickup,
+  Punch,
+  Death,
   Count,
 };
 
 enum class FacingDirection : std::uint8_t {
+  Down,
   Left,
   Right,
+  Up,
+  Count,
 };
 
 constexpr std::size_t ANIMATION_STATE_COUNT = static_cast<std::size_t>(AnimationState::Count);
+constexpr std::size_t FACING_DIRECTION_COUNT = static_cast<std::size_t>(FacingDirection::Count);
 
 constexpr std::size_t AnimationIndex(const AnimationState state) { return static_cast<std::size_t>(state); }
+constexpr std::size_t FacingDirectionIndex(const FacingDirection direction) {
+  return static_cast<std::size_t>(direction);
+}
 
 struct AnimationClip {
-  std::array<Rectangle, 4> frames{};
+  std::array<Rectangle, 6> frames{};
 
   std::size_t frameCount = 1;
   float frameDuration = 0.15f;
 };
 
 struct AnimatedSprite {
-  std::array<AnimationClip, ANIMATION_STATE_COUNT> clips{};
+  std::array<std::array<AnimationClip, FACING_DIRECTION_COUNT>, ANIMATION_STATE_COUNT> clips{};
 
   AnimationState state = AnimationState::Idle;
-  FacingDirection facing = FacingDirection::Right;
+  FacingDirection facing = FacingDirection::Down;
 
   std::size_t currentFrame = 0;
   float elapsed = 0.0f;

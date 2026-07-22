@@ -50,12 +50,12 @@ void Game::UpdateGame() {
 
   const auto &[pos] = registry.get<Position>(player);
 
-  constexpr float SPRITE_SIZE = 128.0f;
-  constexpr float HALF_SPRITE_SIZE = SPRITE_SIZE / 2.0f;
+  constexpr float PLAYER_FRAME_SIZE = 16.0f;
+  constexpr float HALF_PLAYER_FRAME_SIZE = PLAYER_FRAME_SIZE / 2.0f;
 
   camera.target = {
-      std::round(pos.x) + HALF_SPRITE_SIZE,
-      std::round(pos.y) + HALF_SPRITE_SIZE,
+      std::round(pos.x) + HALF_PLAYER_FRAME_SIZE,
+      std::round(pos.y) + HALF_PLAYER_FRAME_SIZE,
   };
   camera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 }

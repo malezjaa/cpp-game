@@ -1,5 +1,8 @@
 #ifndef INC_2D_GAME_TEXTURES_H
 #define INC_2D_GAME_TEXTURES_H
+#include <array>
+#include <cstddef>
+
 #include "raylib-cpp.hpp"
 
 enum class TextureId {
@@ -29,13 +32,15 @@ public:
 
   Textures() { Load(); }
 
-  [[nodiscard]] const raylib::Texture2D &Characters() const { return characters; }
+  [[nodiscard]] const raylib::Texture2D &CharacterAnimation(const std::size_t index) const {
+    return characterAnimations.at(index);
+  }
   [[nodiscard]] const raylib::Texture2D &Tiles() const { return tiles; }
   [[nodiscard]] const raylib::Texture2D &UI() const { return ui; }
   [[nodiscard]] const raylib::Texture2D &UI2() const { return ui2; }
 
 private:
-  raylib::Texture2D characters{};
+  std::array<raylib::Texture2D, 24> characterAnimations{};
   raylib::Texture2D tiles{};
   raylib::Texture2D ui{};
   raylib::Texture2D ui2{};

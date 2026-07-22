@@ -27,7 +27,7 @@ constexpr float ANIMATION_SPEED = 0.5f;
 void UpdateAnimations(entt::registry &registry, const float deltaTime) {
   for (const auto view = registry.view<AnimatedSprite>(); const entt::entity entity: view) {
     auto &sprite = registry.get<AnimatedSprite>(entity);
-    const auto &clip = sprite.clips[AnimationIndex(sprite.state)];
+    const auto &clip = sprite.clips[AnimationIndex(sprite.state)][FacingDirectionIndex(sprite.facing)];
 
     if (clip.frameCount <= 1 || clip.frameDuration <= 0.0f) {
       sprite.currentFrame = 0;
@@ -49,24 +49,20 @@ void DrawAnimatedSprites(entt::registry &registry, const Textures &textures) {
     const auto &[pos] = registry.get<Position>(entity);
     const auto &sprite = registry.get<AnimatedSprite>(entity);
 
-    const auto &clip = sprite.clips[AnimationIndex(sprite.state)];
+    const auto &clip = sprite.clips[AnimationIndex(sprite.state)][FacingDirectionIndex(sprite.facing)];
 
     Rectangle source = clip.frames[sprite.currentFrame];
 
-    if (sprite.facing == FacingDirection::Left) {
-      source.width = -std::abs(source.width);
-    } else {
-      source.width = std::abs(source.width);
-    }
-
     const Rectangle destination{
-        pos.x,
-        pos.y,
+        std::round(pos.x),
+        std::round(pos.y),
         std::abs(source.width) * sprite.scale,
         std::abs(source.height) * sprite.scale,
     };
 
-    DrawTexturePro(textures.Characters(), source, destination, Vector2{}, 0.0f, WHITE);
+    const std::size_t textureIndex = AnimationIndex(sprite.state) * FACING_DIRECTION_COUNT +
+                                     FacingDirectionIndex(sprite.facing);
+    DrawTexturePro(textures.CharacterAnimation(textureIndex), source, destination, Vector2{}, 0.0f, WHITE);
   }
 }
 
@@ -115,10 +111,10 @@ void UpdateMovementAnimations(entt::registry &registry) {
 
     SetAnimationState(sprite, moving ? AnimationState::Walking : AnimationState::Idle);
 
-    if (velocity.x < 0.0f) {
-      sprite.facing = FacingDirection::Left;
-    } else if (velocity.x > 0.0f) {
-      sprite.facing = FacingDirection::Right;
+    if (std::abs(velocity.x) > std::abs(velocity.y)) {
+      sprite.facing = velocity.x < 0.0f ? FacingDirection::Left : FacingDirection::Right;
+    } else if (velocity.y != 0.0f) {
+      sprite.facing = velocity.y < 0.0f ? FacingDirection::Up : FacingDirection::Down;
     }
   }
 }

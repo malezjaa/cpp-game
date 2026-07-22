@@ -4,26 +4,46 @@
 #include "ecs/Components.h"
 #include "ecs/systems.h"
 
-constexpr Rectangle IDLE_RECT = {
-    645.0f,
-    0.0f,
-    128.0f,
-    128.0f,
-};
+namespace {
 
-constexpr Rectangle WALK_A = {
-    0.0f,
-    129.0f,
-    128.0f,
-    128.0f,
-};
+  AnimationClip MakeClip(const float frameWidth, const float frameHeight, const std::size_t frameCount,
+                         const float frameDuration) {
+    AnimationClip clip{
+        .frameCount = frameCount,
+        .frameDuration = frameDuration,
+    };
 
-constexpr Rectangle WALK_B = {
-    129.0f,
-    129.0f,
-    128.0f,
-    128.0f,
-};
+    for (std::size_t frame = 0; frame < frameCount; ++frame) {
+      clip.frames[frame] = {
+          frameWidth * static_cast<float>(frame),
+          0.0f,
+          frameWidth,
+          frameHeight,
+      };
+    }
+
+    return clip;
+  }
+
+  float FrameWidth(const FacingDirection direction) {
+    return direction == FacingDirection::Left || direction == FacingDirection::Right ? 10.0f : 11.0f;
+  }
+
+  float PickupFrameWidth(const FacingDirection direction) {
+    return direction == FacingDirection::Left || direction == FacingDirection::Right ? 10.0f : 11.0f;
+  }
+
+  float PickupFrameHeight(const FacingDirection direction) { return direction == FacingDirection::Up ? 15.0f : 16.0f; }
+
+  float PunchFrameWidth(const FacingDirection direction) {
+    return direction == FacingDirection::Left || direction == FacingDirection::Right ? 13.0f : 11.0f;
+  }
+
+  float PunchFrameHeight(const FacingDirection direction) {
+    return direction == FacingDirection::Left || direction == FacingDirection::Right ? 16.0f : 17.0f;
+  }
+
+} // namespace
 
 entt::entity Player::CreateEntity(entt::registry &registry, const Vector2 position) {
   const entt::entity player = registry.create();
@@ -35,23 +55,19 @@ entt::entity Player::CreateEntity(entt::registry &registry, const Vector2 positi
 
   AnimatedSprite sprite{};
 
-  sprite.clips[AnimationIndex(AnimationState::Idle)] = AnimationClip{
-      .frames = {IDLE_RECT},
-      .frameCount = 1,
-      .frameDuration = 0.2f,
-  };
+  for (std::size_t i = 0; i < FACING_DIRECTION_COUNT; ++i) {
+    const auto direction = static_cast<FacingDirection>(i);
+    const float frameWidth = FrameWidth(direction);
 
-  sprite.clips[AnimationIndex(AnimationState::Walking)] = AnimationClip{
-      .frames = {WALK_A, WALK_B},
-      .frameCount = 2,
-      .frameDuration = 0.15f,
-  };
-
-  sprite.clips[AnimationIndex(AnimationState::Running)] = AnimationClip{
-      .frames = {WALK_A, WALK_B},
-      .frameCount = 2,
-      .frameDuration = 0.08f,
-  };
+    sprite.clips[AnimationIndex(AnimationState::Idle)][i] = MakeClip(frameWidth, 16.0f, 6, 0.2f);
+    sprite.clips[AnimationIndex(AnimationState::Walking)][i] = MakeClip(frameWidth, 17.0f, 6, 0.15f);
+    sprite.clips[AnimationIndex(AnimationState::Running)][i] = MakeClip(frameWidth, 17.0f, 6, 0.08f);
+    sprite.clips[AnimationIndex(AnimationState::Pickup)][i] =
+        MakeClip(PickupFrameWidth(direction), PickupFrameHeight(direction), 3, 0.12f);
+    sprite.clips[AnimationIndex(AnimationState::Punch)][i] =
+        MakeClip(PunchFrameWidth(direction), PunchFrameHeight(direction), 4, 0.1f);
+    sprite.clips[AnimationIndex(AnimationState::Death)][i] = MakeClip(21.0f, 16.0f, 6, 0.12f);
+  }
 
   registry.emplace<AnimatedSprite>(player, sprite);
 
@@ -85,8 +101,8 @@ void UpdatePlayerInput(entt::registry &registry) {
     direction.x /= length;
     direction.y /= length;
 
-    constexpr float WALK_SPEED = 200.0f;
-    constexpr float RUN_MULTIPLIER = 1.5f;
+    constexpr float WALK_SPEED = 150.0f;
+    constexpr float RUN_MULTIPLIER = 1.3f;
 
     const float speed = WALK_SPEED * (isRunning ? RUN_MULTIPLIER : 1.0f);
 
@@ -95,10 +111,10 @@ void UpdatePlayerInput(entt::registry &registry) {
         direction.y * speed,
     };
 
-    if (direction.x < 0.0f) {
-      sprite.facing = FacingDirection::Left;
-    } else if (direction.x > 0.0f) {
-      sprite.facing = FacingDirection::Right;
+    if (std::abs(direction.x) > std::abs(direction.y)) {
+      sprite.facing = direction.x < 0.0f ? FacingDirection::Left : FacingDirection::Right;
+    } else {
+      sprite.facing = direction.y < 0.0f ? FacingDirection::Up : FacingDirection::Down;
     }
 
     SetAnimationState(sprite, isRunning ? AnimationState::Running : AnimationState::Walking);

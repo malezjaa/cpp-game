@@ -1,7 +1,12 @@
+#define RAYTMX_IMPLEMENTATION
+
 #include "Player.h"
 #include "raylib-cpp.hpp"
 #include "scenes/Game.h"
+
 using raylib::Window;
+
+// Buy rights to https://thelazystone.itch.io/post-apocalypse-pixel-art-asset-pack if ever released commercialy
 
 int main() {
   rlImGuiSetup(true);

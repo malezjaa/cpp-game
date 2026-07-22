@@ -1,9 +1,24 @@
 #ifndef INC_2D_GAME_MAP_H
 #define INC_2D_GAME_MAP_H
+#include "../third_party/raytmx.h"
 #include "tiles.h"
+
+enum class CellState { Free, Blocked, Reserved };
+
+struct Cell {
+  int x;
+  int y;
+  CellState state;
+};
+
+struct BuildGrid {
+  int width;
+  int height;
+  std::vector<Cell> cells;
+};
+
 struct Map {
-  TileLayer ground;
-  TileLayer decorations;
-  TileLayer collision;
+  TmxMap *tmx_map;
+  BuildGrid grid;
 };
 #endif

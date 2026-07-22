@@ -1,6 +1,7 @@
 #include "Game.h"
 
 #include <magic_enum/magic_enum.hpp>
+#include <map>
 
 #include "../Player.h"
 #include "../ecs/Components.h"
@@ -17,8 +18,8 @@ Game::Game(Camera2D &camera, SceneManager &scene_manager) :
                                                           "Quit",
                                                           [this] { this->scene_manager.UI().ShowQuitDialog(); },
                                                       },
-                                                  }) {
-  world.InitializeMap();
+                                                  }),
+    world{} {
 
   player = Player::CreateEntity(registry, Vector2{100.0f, 100.0f});
 }
@@ -53,16 +54,21 @@ void Game::UpdateGame() {
   constexpr float HALF_SPRITE_SIZE = SPRITE_SIZE / 2.0f;
 
   camera.target = {
-      pos.x + HALF_SPRITE_SIZE,
-      pos.y + HALF_SPRITE_SIZE,
+      std::round(pos.x) + HALF_SPRITE_SIZE,
+      std::round(pos.y) + HALF_SPRITE_SIZE,
   };
   camera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 }
 
 void Game::Draw() {
   ClearBackground(RAYWHITE);
+
   BeginMode2D(camera);
-  DrawAnimatedSprites(registry, scene_manager.textures);
+  {
+    world.Draw(&camera);
+    DrawAnimatedSprites(registry, scene_manager.textures);
+  }
+
   EndMode2D();
 
   if (scene_manager.dev_tools()) {

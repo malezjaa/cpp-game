@@ -105,7 +105,7 @@ void UpdateWalkTarget(entt::registry &registry, const float deltaTime) {
 }
 
 void UpdateMovementAnimations(entt::registry &registry) {
-  const auto view = registry.view<Velocity, AnimatedSprite>();
+  const auto view = registry.view<Velocity, AnimatedSprite>(entt::exclude<PlayerControlled>);
 
   for (const entt::entity entity: view) {
     const auto &[velocity] = view.get<Velocity>(entity);

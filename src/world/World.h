@@ -8,8 +8,10 @@ class World {
 public:
   void LoadMap();
   void Update(float dt);
-  void Draw();
-  void InitializeMap();
+  void Draw(const Camera2D *camera) const;
+  World();
+
+  ~World() { UnloadTMX(map.tmx_map); }
 
 private:
   Map map;

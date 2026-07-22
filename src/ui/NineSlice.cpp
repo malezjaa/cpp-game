@@ -1,7 +1,7 @@
 #include "NineSlice.h"
 
 void NineSlice::Draw(const Texture2D &texture, const Rectangle source, const Rectangle destination,
-                     const NineSliceBorders borders, const Color tint = WHITE) {
+                     const NineSliceBorders borders, const Color tint) {
   if (source.width <= borders.left + borders.right || source.height <= borders.top + borders.bottom ||
       destination.width <= 0.0f || destination.height <= 0.0f) {
     return;
@@ -45,7 +45,7 @@ void NineSlice::Draw(const Texture2D &texture, const Rectangle source, const Rec
 }
 
 void NineSlice::DrawBorder(const Texture2D &texture, const Rectangle source, const Rectangle destination,
-                           const NineSliceBorders borders, const Color tint = WHITE) {
+                           const NineSliceBorders borders, const Color tint) {
   if (source.width <= borders.left + borders.right || source.height <= borders.top + borders.bottom ||
       destination.width <= 0.0f || destination.height <= 0.0f) {
     return;

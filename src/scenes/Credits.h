@@ -10,13 +10,15 @@ struct Credit {
   std::vector<std::string_view> source_pages;
 };
 
-inline const std::array<Credit, 2> credits{
+inline const std::array<Credit, 4> credits{
     {{
          "Kenney",
          {
              "https://kenney.nl/assets/ui-pack-pixel-adventure",
          },
      },
+     {"Anokolisa", {"https://anokolisa.itch.io/free-pixel-art-asset-pack-topdown-tileset-rpg-16x16-sprites"}},
+     {"TheLazyStone", {"https://thelazystone.itch.io/post-apocalypse-pixel-art-asset-pack"}},
      {"ToffeeCraft", {"https://toffeecraft.itch.io/ui-user-interface-mega-pack"}}}};
 
 #endif

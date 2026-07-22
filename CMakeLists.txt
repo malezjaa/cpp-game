@@ -94,6 +94,8 @@ set(SOURCES src/main.cpp
         src/ui/Dialog.cpp
         src/ui/Menu.cpp
         src/ui/NineSlice.cpp
+        src/third_party/raytmx.h
+        src/third_party/hoxml.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

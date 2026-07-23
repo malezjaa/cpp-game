@@ -1,15 +1,26 @@
 {
-    "activeFile": "",
+    "activeFile": "maps/map.tmx",
     "expandedProjectPaths": [
+        "maps",
+        "tilesets",
+        "."
     ],
     "fileStates": {
         "maps/map.tmx": {
-            "scale": 0.5064687499999999,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 399.82723514530767,
-                "y": 800.6416980317148
+                "x": 239.5,
+                "y": 262.5
             }
+        },
+        "tilesets/interior_props.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "tilesets/interior_walls.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 2
         },
         "tilesets/tiles.tsx": {
             "scaleInDock": 1,
@@ -23,11 +34,17 @@
     "map.tileWidth": 16,
     "map.width": 50,
     "openFiles": [
+        "tilesets/tiles.tsx",
+        "tilesets/interior_props.tsx",
+        "tilesets/interior_walls.tsx",
+        "maps/map.tmx"
     ],
     "project": "tiled.tiled-project",
     "recentFiles": [
+        "maps/map.tmx",
         "tilesets/tiles.tsx",
-        "maps/map.tmx"
+        "tilesets/interior_props.tsx",
+        "tilesets/interior_walls.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

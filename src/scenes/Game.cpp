@@ -5,6 +5,7 @@
 
 #include "../Player.h"
 #include "../ecs/Components.h"
+#include "../ecs/collisions.h"
 #include "../ecs/systems.h"
 #include "imgui.h"
 
@@ -21,7 +22,7 @@ Game::Game(Camera2D &camera, SceneManager &scene_manager) :
                                                   }),
     world{} {
 
-  player = Player::CreateEntity(registry, Vector2{100.0f, 100.0f});
+  player = Player::CreateEntity(registry, Vector2{1024.0f, 500.0f});
 }
 
 void Game::Update() {
@@ -40,11 +41,12 @@ void Game::Update() {
 }
 
 void Game::UpdateGame() {
-  const float deltaTime = GetFrameTime();
+  const float deltaTime = std::min(GetFrameTime(), 1.0f / 30.0f);
 
   UpdateWalkTarget(registry, deltaTime);
-  UpdatePlayerInput(registry);
+  UpdatePlayerInput(registry, world.GetMap());
   UpdateMovement(registry, deltaTime);
+  UpdateMovementAndCollisions(registry, world.GetMap(), deltaTime);
   UpdateMovementAnimations(registry);
   UpdateAnimations(registry, deltaTime);
 
@@ -57,15 +59,21 @@ void Game::UpdateGame() {
       std::round(pos.x) + HALF_PLAYER_FRAME_SIZE,
       std::round(pos.y) + HALF_PLAYER_FRAME_SIZE,
   };
-  camera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+  camera.offset = {static_cast<float>(GetScreenWidth()) / 2.0f, static_cast<float>(GetScreenHeight()) / 2.0f};
 }
 
 void Game::Draw() {
-  ClearBackground(RAYWHITE);
+  ClearBackground(BLACK);
 
   BeginMode2D(camera);
   {
     world.Draw(&camera);
+    if (scene_manager.dev_tools()) {
+      for (const Rectangle &rect: world.GetMap().collisions) {
+        DrawRectangleLinesEx(rect, .5f, ORANGE);
+      }
+    }
+
     DrawAnimatedSprites(registry, scene_manager.textures);
   }
 

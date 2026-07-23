@@ -28,7 +28,7 @@ void SceneManager::SwitchTo(const SceneType type) {
 }
 
 void SceneManager::Update() {
-  if (IsKeyPressed(KEY_F11)) {
+  if (IsKeyPressed(KEY_F1)) {
     show_dev_tools = !show_dev_tools;
   }
   CurrentScene().Update();
@@ -39,6 +39,7 @@ void SceneManager::DrawDevTools() {
   ImGui::Text("FPS: %d", GetFPS());
   const auto name = magic_enum::enum_name(current_scene);
   ImGui::Text("Scene: %.*s", static_cast<int>(name.size()), name.data());
+  ImGui::Text("Profile: %s", BUILD_PROFILE);
   ImGui::End();
 }
 

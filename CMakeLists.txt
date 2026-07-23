@@ -96,6 +96,8 @@ set(SOURCES src/main.cpp
         src/ui/NineSlice.cpp
         src/third_party/raytmx.h
         src/third_party/hoxml.h
+        src/ecs/collisions.cpp
+        src/ecs/collisions.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -134,4 +136,8 @@ target_link_libraries(2d_game PRIVATE
         EnTT::EnTT
         rlimgui
         magic_enum::magic_enum
+)
+
+target_compile_definitions(2d_game PRIVATE
+        BUILD_PROFILE="$<CONFIG>"
 )

@@ -2,7 +2,9 @@
 
 #include "Textures.h"
 #include "ecs/Components.h"
+#include "ecs/collisions.h"
 #include "ecs/systems.h"
+#include "world/Map.h"
 
 namespace {
 
@@ -50,6 +52,9 @@ entt::entity Player::CreateEntity(entt::registry &registry, const Vector2 positi
 
   registry.emplace<Position>(player, Position{position});
   registry.emplace<Velocity>(player);
+  registry.emplace<Collider>(player, Collider{
+                                         .size = {12.0f, 16.0f},
+                                     });
   registry.emplace<Health>(player, Health{100, 100});
   registry.emplace<PlayerControlled>(player);
 
@@ -74,7 +79,7 @@ entt::entity Player::CreateEntity(entt::registry &registry, const Vector2 positi
   return player;
 }
 
-void UpdatePlayerInput(entt::registry &registry) {
+void UpdatePlayerInput(entt::registry &registry, const Map &map) {
   const auto view = registry.view<Velocity, AnimatedSprite, PlayerControlled>();
 
   for (const entt::entity entity: view) {

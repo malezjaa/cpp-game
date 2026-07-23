@@ -1,6 +1,7 @@
 #include <entt/entity/registry.hpp>
 
 #include "Components.h"
+#include "collisions.h"
 
 void SetAnimationState(AnimatedSprite &sprite, const AnimationState newState) {
   if (sprite.state == newState) {
@@ -13,7 +14,7 @@ void SetAnimationState(AnimatedSprite &sprite, const AnimationState newState) {
 }
 
 void UpdateMovement(entt::registry &registry, const float deltaTime) {
-  for (const auto view = registry.view<Position, Velocity>(); const entt::entity entity: view) {
+  for (const auto view = registry.view<Position, Velocity>(entt::exclude<Collider>); const entt::entity entity: view) {
     auto &[pos] = registry.get<Position>(entity);
     const auto &[velocity] = registry.get<Velocity>(entity);
 
@@ -60,8 +61,8 @@ void DrawAnimatedSprites(entt::registry &registry, const Textures &textures) {
         std::abs(source.height) * sprite.scale,
     };
 
-    const std::size_t textureIndex = AnimationIndex(sprite.state) * FACING_DIRECTION_COUNT +
-                                     FacingDirectionIndex(sprite.facing);
+    const std::size_t textureIndex =
+        AnimationIndex(sprite.state) * FACING_DIRECTION_COUNT + FacingDirectionIndex(sprite.facing);
     DrawTexturePro(textures.CharacterAnimation(textureIndex), source, destination, Vector2{}, 0.0f, WHITE);
   }
 }

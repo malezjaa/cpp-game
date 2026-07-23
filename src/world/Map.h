@@ -20,5 +20,6 @@ struct BuildGrid {
 struct Map {
   TmxMap *tmx_map;
   BuildGrid grid;
+  std::vector<Rectangle> collisions;
 };
 #endif

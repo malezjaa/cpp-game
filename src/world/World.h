@@ -9,8 +9,11 @@ public:
   void LoadMap();
   void Update(float dt);
   void Draw(const Camera2D *camera) const;
-  World();
 
+  Map &GetMap() { return map; }
+  [[nodiscard]] const Map &GetMap() const { return map; }
+
+  World();
   ~World() { UnloadTMX(map.tmx_map); }
 
 private:

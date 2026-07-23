@@ -16,6 +16,11 @@ public:
   virtual void Draw() = 0;
 };
 
+struct DevTools {
+  bool enabled = false;
+  bool colliders = false;
+};
+
 class SceneManager {
 public:
   const Textures &textures;
@@ -31,14 +36,13 @@ public:
   void DrawDevTools();
   void Draw();
 
-  bool dev_tools() const { return show_dev_tools; }
+  DevTools dev_tools;
 
 private:
   std::unordered_map<SceneType, std::unique_ptr<Scene>> scenes{};
   SceneType current_scene = SceneType::MainMenu;
   raylib::Camera2D camera;
   UIManager ui_manager;
-  bool show_dev_tools = false;
 };
 
 #endif

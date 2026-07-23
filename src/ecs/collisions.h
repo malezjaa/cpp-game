@@ -6,6 +6,7 @@
 #include <entt/entity/registry.hpp>
 
 #include "../world/Map.h"
+#include "Components.h"
 
 struct Collider {
   Vector2 offset{};
@@ -13,5 +14,6 @@ struct Collider {
 };
 
 void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, float deltaTime);
+Rectangle GetBounds(const Position &position, const Collider &collider);
 
 #endif

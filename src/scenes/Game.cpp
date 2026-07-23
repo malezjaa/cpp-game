@@ -68,18 +68,32 @@ void Game::Draw() {
   BeginMode2D(camera);
   {
     world.Draw(&camera);
-    if (scene_manager.dev_tools()) {
+    DrawAnimatedSprites(registry, scene_manager.textures);
+
+    if (scene_manager.dev_tools.colliders) {
       for (const Rectangle &rect: world.GetMap().collisions) {
         DrawRectangleLinesEx(rect, .5f, ORANGE);
       }
-    }
 
-    DrawAnimatedSprites(registry, scene_manager.textures);
+      for (const auto &collider: registry.view<Collider, Position>()) {
+        const auto &pos = registry.get<Position>(collider);
+        const auto &col = registry.get<Collider>(collider);
+
+        Rectangle bounds = GetBounds(pos, col);
+
+        bounds.x = std::round(bounds.x);
+        bounds.y = std::round(bounds.y);
+        bounds.width = std::round(bounds.width);
+        bounds.height = std::round(bounds.height);
+
+        DrawRectangleLinesEx(bounds, 1.0f, ORANGE);
+      }
+    }
   }
 
   EndMode2D();
 
-  if (scene_manager.dev_tools()) {
+  if (scene_manager.dev_tools.enabled) {
     const auto &[pos] = registry.get<Position>(player);
     ImGui::Begin("Player");
     ImGui::Text("Coordinates: (%.2f, %.2f)", pos.x, pos.y);

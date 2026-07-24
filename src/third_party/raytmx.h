@@ -3433,12 +3433,39 @@ void DrawTMXTileLayer(const TmxMap *map, Rectangle viewport, TmxLayer layer, Ray
   if ((map == NULL) || (layer.type != LAYER_TYPE_TILE_LAYER) || (layer.exact.tileLayer.tilesLength == 0))
     return;
 
-  // Iterate through each tile that overlaps with the viewport and draw them.
-  uint32_t rawGid = 0;
-  Rectangle destRect = {ZERO_INIT};
-  IterateTileLayer(NULL, NULL, NULL, NULL, NULL); // Reset tile iteration.
-  while (IterateTileLayer(map, &(layer.exact.tileLayer), &rawGid, NULL, &destRect))
-    DrawTMXLayerTile(map, viewport, transform, rawGid, destRect, tint); // Draw the individual tile.
+  const int layerWidth = (int) layer.exact.tileLayer.width;
+  const int layerHeight = (int) layer.exact.tileLayer.height;
+  const int padding = 1;
+  const int minX =
+      Clamp((int) floorf((viewport.x - transform.position.x) / map->tileWidth) - padding, 0, layerWidth - 1);
+  const int maxX = Clamp((int) ceilf((viewport.x + viewport.width - transform.position.x) / map->tileWidth) + padding,
+                         0, layerWidth - 1);
+  const int minY =
+      Clamp((int) floorf((viewport.y - transform.position.y) / map->tileHeight) - padding, 0, layerHeight - 1);
+  const int maxY = Clamp((int) ceilf((viewport.y + viewport.height - transform.position.y) / map->tileHeight) + padding,
+                         0, layerHeight - 1);
+
+  const bool drawRightToLeft = map->renderOrder == RENDER_ORDER_LEFT_DOWN || map->renderOrder == RENDER_ORDER_LEFT_UP;
+  const bool drawBottomToTop = map->renderOrder == RENDER_ORDER_RIGHT_UP || map->renderOrder == RENDER_ORDER_LEFT_UP;
+  const int xStart = drawRightToLeft ? maxX : minX;
+  const int xEnd = drawRightToLeft ? minX : maxX;
+  const int xStep = drawRightToLeft ? -1 : 1;
+  const int yStart = drawBottomToTop ? maxY : minY;
+  const int yEnd = drawBottomToTop ? minY : maxY;
+  const int yStep = drawBottomToTop ? -1 : 1;
+
+  for (int y = yStart; drawBottomToTop ? y >= yEnd : y <= yEnd; y += yStep) {
+    for (int x = xStart; drawRightToLeft ? x >= xEnd : x <= xEnd; x += xStep) {
+      const int index = y * layerWidth + x;
+      const uint32_t rawGid = layer.exact.tileLayer.tiles[index];
+      const uint32_t gid = GetGid(rawGid, NULL, NULL, NULL, NULL);
+      const TmxTile tile = gid < map->gidsToTilesLength ? map->gidsToTiles[gid] : (TmxTile) {ZERO_INIT};
+      const Rectangle destRect = {(float) (x * (int) map->tileWidth), (float) (y * (int) map->tileHeight),
+                                  tile.dimensions.x, tile.dimensions.y};
+
+      DrawTMXLayerTile(map, viewport, transform, rawGid, destRect, tint);
+    }
+  }
 }
 
 void DrawTextureTile(Texture2D texture, Rectangle source, Rectangle dest, bool flipX, bool flipY, bool flipDiag,

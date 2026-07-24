@@ -5,8 +5,6 @@
 
 #include "Components.h"
 
-struct Map;
-
 Rectangle GetBounds(const Position &position, const Collider &collider) {
   return {
       position.value.x + collider.offset.x,
@@ -16,9 +14,43 @@ Rectangle GetBounds(const Position &position, const Collider &collider) {
   };
 }
 
+bool CheckCollisionLineRec(const Vector2 start, const Vector2 end, const Rectangle rect) {
+  if (CheckCollisionPointRec(start, rect) || CheckCollisionPointRec(end, rect)) {
+    return true;
+  }
+
+  const Vector2 topLeft{rect.x, rect.y};
+  const Vector2 topRight{rect.x + rect.width, rect.y};
+  const Vector2 bottomLeft{rect.x, rect.y + rect.height};
+  const Vector2 bottomRight{rect.x + rect.width, rect.y + rect.height};
+
+  Vector2 collisionPoint{};
+
+  return CheckCollisionLines(start, end, topLeft, topRight, &collisionPoint) ||
+         CheckCollisionLines(start, end, topRight, bottomRight, &collisionPoint) ||
+         CheckCollisionLines(start, end, bottomRight, bottomLeft, &collisionPoint) ||
+         CheckCollisionLines(start, end, bottomLeft, topLeft, &collisionPoint);
+}
+
 bool CollidesWithMap(const Rectangle bounds, const Map &map) {
   for (const Rectangle obstacle: map.collisions) {
     if (CheckCollisionRecs(bounds, obstacle)) {
+      return true;
+    }
+  }
+
+  for (const auto &points: map.points) {
+    if (points.size() < 2) {
+      continue;
+    }
+
+    for (std::size_t i = 0; i + 1 < points.size(); ++i) {
+      if (CheckCollisionLineRec(points[i], points[i + 1], bounds)) {
+        return true;
+      }
+    }
+
+    if (points.size() > 2 && CheckCollisionLineRec(points.back(), points.front(), bounds)) {
       return true;
     }
   }
@@ -28,6 +60,7 @@ bool CollidesWithMap(const Rectangle bounds, const Map &map) {
 
 void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, const float deltaTime) {
   for (const auto view = registry.view<Position, Velocity, Collider>(); const entt::entity entity: view) {
+
     auto &position = registry.get<Position>(entity);
     auto &velocity = registry.get<Velocity>(entity);
     const auto &collider = registry.get<Collider>(entity);

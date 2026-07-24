@@ -21,5 +21,6 @@ struct Map {
   TmxMap *tmx_map;
   BuildGrid grid;
   std::vector<Rectangle> collisions;
+  std::vector<std::vector<Vector2>> points;
 };
 #endif

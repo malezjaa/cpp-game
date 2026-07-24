@@ -17,7 +17,20 @@ World::World() {
 
       for (std::size_t j = 0; j < group.objectsLength; ++j) {
         auto &obj = group.objects[j];
-        this->map.collisions.emplace_back(obj.aabb.x, obj.aabb.y, obj.aabb.width, obj.aabb.height);
+
+        if (obj.pointsLength > 0) {
+          std::vector<Vector2> points;
+          points.reserve(obj.pointsLength);
+
+          for (std::size_t point_i = 0; point_i < obj.pointsLength; ++point_i) {
+            points.emplace_back(obj.x + obj.points[point_i].x, obj.y + obj.points[point_i].y);
+          }
+
+          map.points.emplace_back(std::move(points));
+          continue;
+        }
+
+        map.collisions.emplace_back(obj.aabb.x, obj.aabb.y, obj.aabb.width, obj.aabb.height);
       }
     }
   }

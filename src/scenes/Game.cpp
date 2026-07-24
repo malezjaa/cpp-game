@@ -64,8 +64,8 @@ void Game::UpdateGame() {
 
 void Game::Draw() {
   ClearBackground(BLACK);
-
   BeginMode2D(camera);
+
   {
     world.Draw(&camera);
     DrawAnimatedSprites(registry, scene_manager.textures);
@@ -73,6 +73,15 @@ void Game::Draw() {
     if (scene_manager.dev_tools.colliders) {
       for (const Rectangle &rect: world.GetMap().collisions) {
         DrawRectangleLinesEx(rect, .5f, ORANGE);
+      }
+
+      for (const auto &points: world.GetMap().points) {
+        if (points.size() < 2) {
+          continue;
+        }
+
+        DrawLineStrip(points.data(), static_cast<int>(points.size()), ORANGE);
+        DrawLineV(points.back(), points.front(), ORANGE);
       }
 
       for (const auto &collider: registry.view<Collider, Position>()) {
@@ -86,7 +95,7 @@ void Game::Draw() {
         bounds.width = std::round(bounds.width);
         bounds.height = std::round(bounds.height);
 
-        DrawRectangleLinesEx(bounds, 1.0f, ORANGE);
+        DrawRectangleLinesEx(bounds, .5f, ORANGE);
       }
     }
   }

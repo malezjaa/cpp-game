@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-up" width="150" height="270" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="29">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-up" width="150" height="270" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="30">
  <tileset firstgid="1" source="../tilesets/tiles.tsx"/>
  <tileset firstgid="651" source="../tilesets/interior_walls.tsx"/>
  <tileset firstgid="1676" source="../tilesets/Wire Fence.tsx"/>

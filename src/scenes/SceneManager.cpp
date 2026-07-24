@@ -32,7 +32,7 @@ void SceneManager::Update() {
     dev_tools.enabled = !dev_tools.enabled;
   }
   if (IsKeyPressed(KEY_F2)) {
-    dev_tools.colliders = !dev_tools.colliders;
+    dev_tools.draw_colliders = !dev_tools.draw_colliders;
   }
   CurrentScene().Update();
 }
@@ -43,6 +43,7 @@ void SceneManager::DrawDevTools() {
   const auto name = magic_enum::enum_name(current_scene);
   ImGui::Text("Scene: %.*s", static_cast<int>(name.size()), name.data());
   ImGui::Text("Profile: %s", BUILD_PROFILE);
+  ImGui::Checkbox("Collisions", &dev_tools.colliders);
   ImGui::End();
 }
 

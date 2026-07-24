@@ -46,7 +46,7 @@ void Game::UpdateGame() {
   UpdateWalkTarget(registry, deltaTime);
   UpdatePlayerInput(registry, world.GetMap());
   UpdateMovement(registry, deltaTime);
-  UpdateMovementAndCollisions(registry, world.GetMap(), deltaTime);
+  UpdateMovementAndCollisions(registry, world.GetMap(), deltaTime, scene_manager.dev_tools.colliders);
   UpdateMovementAnimations(registry);
   UpdateAnimations(registry, deltaTime);
 
@@ -70,7 +70,7 @@ void Game::Draw() {
     world.Draw(&camera);
     DrawAnimatedSprites(registry, scene_manager.textures);
 
-    if (scene_manager.dev_tools.colliders) {
+    if (scene_manager.dev_tools.draw_colliders) {
       for (const Rectangle &rect: world.GetMap().collisions) {
         DrawRectangleLinesEx(rect, .5f, ORANGE);
       }

@@ -13,7 +13,7 @@ struct Collider {
   Vector2 size{10.0f, 8.0f};
 };
 
-void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, float deltaTime);
+void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, float deltaTime, bool handle_collisions);
 Rectangle GetBounds(const Position &position, const Collider &collider);
 
 #endif

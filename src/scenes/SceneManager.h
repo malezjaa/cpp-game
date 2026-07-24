@@ -18,7 +18,8 @@ public:
 
 struct DevTools {
   bool enabled = false;
-  bool colliders = false;
+  bool draw_colliders = false;
+  bool colliders = true;
 };
 
 class SceneManager {

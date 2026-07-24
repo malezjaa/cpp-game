@@ -58,7 +58,8 @@ bool CollidesWithMap(const Rectangle bounds, const Map &map) {
   return false;
 }
 
-void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, const float deltaTime) {
+void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, const float deltaTime,
+                                 const bool handle_collisions) {
   for (const auto view = registry.view<Position, Velocity, Collider>(); const entt::entity entity: view) {
 
     auto &position = registry.get<Position>(entity);
@@ -67,14 +68,14 @@ void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, const
 
     position.value.x += velocity.value.x * deltaTime;
 
-    if (CollidesWithMap(GetBounds(position, collider), map)) {
+    if (CollidesWithMap(GetBounds(position, collider), map) && handle_collisions) {
       position.value.x -= velocity.value.x * deltaTime;
       velocity.value.x = 0.0f;
     }
 
     position.value.y += velocity.value.y * deltaTime;
 
-    if (CollidesWithMap(GetBounds(position, collider), map)) {
+    if (CollidesWithMap(GetBounds(position, collider), map) && handle_collisions) {
       position.value.y -= velocity.value.y * deltaTime;
       velocity.value.y = 0.0f;
     }

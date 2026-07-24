@@ -20,6 +20,7 @@ public:
   void DrawUI();
   void DrawGameUI();
   void DrawPauseMenuUI();
+  void DrawDevHelpers();
 
 private:
   entt::registry registry;

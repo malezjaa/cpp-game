@@ -20,6 +20,7 @@ struct DevTools {
   bool enabled = false;
   bool draw_colliders = false;
   bool colliders = true;
+  bool draw_grid_map = false;
 };
 
 class SceneManager {

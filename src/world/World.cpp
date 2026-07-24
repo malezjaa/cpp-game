@@ -5,10 +5,14 @@
 #include "../third_party/raytmx.h"
 
 World::World() {
-  this->map = Map{.tmx_map = LoadTMX("../assets/maps/map.tmx"), .grid = BuildGrid{}};
-  if (this->map.tmx_map == nullptr) {
+  map = Map{.tmx_map = LoadTMX("../assets/maps/map.tmx"), .grid = BuildGrid{}};
+  if (map.tmx_map == nullptr) {
     TraceLog(LOG_ERROR, "Could not load map");
   }
+
+  // Width and height from tmx map are actually number of tiles not pixels
+  map.width = map.tmx_map->width * 16;
+  map.height = map.tmx_map->height * 16;
 
   const TmxLayer *layers = map.tmx_map->layers;
   for (std::size_t i = 0; i < map.tmx_map->layersLength; ++i) {

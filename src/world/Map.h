@@ -22,5 +22,7 @@ struct Map {
   BuildGrid grid;
   std::vector<Rectangle> collisions;
   std::vector<std::vector<Vector2>> points;
+  uint32_t width;
+  uint32_t height;
 };
 #endif

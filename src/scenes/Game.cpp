@@ -1,5 +1,6 @@
 #include "Game.h"
 
+#include <iostream>
 #include <magic_enum/magic_enum.hpp>
 #include <map>
 
@@ -69,35 +70,7 @@ void Game::Draw() {
   {
     world.Draw(&camera);
     DrawAnimatedSprites(registry, scene_manager.textures);
-
-    if (scene_manager.dev_tools.draw_colliders) {
-      for (const Rectangle &rect: world.GetMap().collisions) {
-        DrawRectangleLinesEx(rect, .5f, ORANGE);
-      }
-
-      for (const auto &points: world.GetMap().points) {
-        if (points.size() < 2) {
-          continue;
-        }
-
-        DrawLineStrip(points.data(), static_cast<int>(points.size()), ORANGE);
-        DrawLineV(points.back(), points.front(), ORANGE);
-      }
-
-      for (const auto &collider: registry.view<Collider, Position>()) {
-        const auto &pos = registry.get<Position>(collider);
-        const auto &col = registry.get<Collider>(collider);
-
-        Rectangle bounds = GetBounds(pos, col);
-
-        bounds.x = std::round(bounds.x);
-        bounds.y = std::round(bounds.y);
-        bounds.width = std::round(bounds.width);
-        bounds.height = std::round(bounds.height);
-
-        DrawRectangleLinesEx(bounds, .5f, ORANGE);
-      }
-    }
+    DrawDevHelpers();
   }
 
   EndMode2D();
@@ -110,6 +83,47 @@ void Game::Draw() {
   }
 
   DrawUI();
+}
+
+void Game::DrawDevHelpers() {
+  if (scene_manager.dev_tools.draw_colliders) {
+    for (const Rectangle &rect: world.GetMap().collisions) {
+      DrawRectangleLinesEx(rect, .5f, ORANGE);
+    }
+
+    for (const auto &points: world.GetMap().points) {
+      if (points.size() < 2) {
+        continue;
+      }
+
+      DrawLineStrip(points.data(), static_cast<int>(points.size()), ORANGE);
+      DrawLineV(points.back(), points.front(), ORANGE);
+    }
+
+    for (const auto &collider: registry.view<Collider, Position>()) {
+      const auto &pos = registry.get<Position>(collider);
+      const auto &col = registry.get<Collider>(collider);
+
+      Rectangle bounds = GetBounds(pos, col);
+
+      bounds.x = std::round(bounds.x);
+      bounds.y = std::round(bounds.y);
+      bounds.width = std::round(bounds.width);
+      bounds.height = std::round(bounds.height);
+
+      DrawRectangleLinesEx(bounds, .5f, ORANGE);
+    }
+  }
+
+  if (scene_manager.dev_tools.draw_grid_map) {
+    for (int x = 0; x <= world.GetMap().width; x += 16) {
+      DrawLine(x, 0, x, static_cast<int>(world.GetMap().height), BLUE);
+    }
+
+    for (int y = 0; y <= world.GetMap().height; y += 16) {
+      DrawLine(0, y, static_cast<int>(world.GetMap().width), y, BLUE);
+    }
+  }
 }
 
 void Game::DrawGameUI() {}

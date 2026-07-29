@@ -32,7 +32,7 @@ bool CheckCollisionLineRec(const Vector2 start, const Vector2 end, const Rectang
          CheckCollisionLines(start, end, bottomLeft, topLeft, &collisionPoint);
 }
 
-bool CollidesWithMap(const Rectangle bounds, const Map &map) {
+bool CollidesWithMap(entt::registry &registry, const entt::entity &entity, const Rectangle bounds, const Map &map) {
   for (const Rectangle obstacle: map.collisions) {
     if (CheckCollisionRecs(bounds, obstacle)) {
       return true;
@@ -55,6 +55,16 @@ bool CollidesWithMap(const Rectangle bounds, const Map &map) {
     }
   }
 
+  for (const auto &collide: registry.view<Collider, Position>()) {
+    if (collide == entity)
+      continue;
+
+    auto &position = registry.get<Position>(collide);
+    if (auto &collider = registry.get<Collider>(collide); CheckCollisionRecs(bounds, GetBounds(position, collider))) {
+      return true;
+    }
+  }
+
   return false;
 }
 
@@ -68,14 +78,14 @@ void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, const
 
     position.value.x += velocity.value.x * deltaTime;
 
-    if (CollidesWithMap(GetBounds(position, collider), map) && handle_collisions) {
+    if (CollidesWithMap(registry, entity, GetBounds(position, collider), map) && handle_collisions) {
       position.value.x -= velocity.value.x * deltaTime;
       velocity.value.x = 0.0f;
     }
 
     position.value.y += velocity.value.y * deltaTime;
 
-    if (CollidesWithMap(GetBounds(position, collider), map) && handle_collisions) {
+    if (CollidesWithMap(registry, entity, GetBounds(position, collider), map) && handle_collisions) {
       position.value.y -= velocity.value.y * deltaTime;
       velocity.value.y = 0.0f;
     }

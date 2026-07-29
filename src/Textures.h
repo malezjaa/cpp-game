@@ -38,12 +38,17 @@ public:
   [[nodiscard]] const raylib::Texture2D &Tiles() const { return tiles; }
   [[nodiscard]] const raylib::Texture2D &UI() const { return ui; }
   [[nodiscard]] const raylib::Texture2D &UI2() const { return ui2; }
+  [[nodiscard]] const raylib::Texture2D &HPBar() const { return health_bar; }
+  [[nodiscard]] const raylib::Texture2D &HP() const { return hp; }
 
 private:
   std::array<raylib::Texture2D, 24> characterAnimations{};
   raylib::Texture2D tiles{};
   raylib::Texture2D ui{};
   raylib::Texture2D ui2{};
+
+  raylib::Texture2D health_bar;
+  raylib::Texture2D hp;
 };
 
 #endif

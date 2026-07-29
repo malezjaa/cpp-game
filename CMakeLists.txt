@@ -98,6 +98,9 @@ set(SOURCES src/main.cpp
         src/third_party/hoxml.h
         src/ecs/collisions.cpp
         src/ecs/collisions.h
+        src/ui/HealthBar.cpp
+        src/ui/HealthBar.h
+        src/ui/HealthBar.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

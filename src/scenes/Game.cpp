@@ -8,6 +8,7 @@
 #include "../ecs/Components.h"
 #include "../ecs/collisions.h"
 #include "../ecs/systems.h"
+#include "../ui/HealthBar.h"
 #include "imgui.h"
 
 Game::Game(Camera2D &camera, SceneManager &scene_manager) :
@@ -128,7 +129,10 @@ void Game::DrawDevHelpers() {
   }
 }
 
-void Game::DrawGameUI() {}
+void Game::DrawGameUI() {
+  const Health &health = registry.get<Health>(player);
+  DrawHealthBar(scene_manager.UI().Text(), scene_manager.textures, health);
+}
 
 void Game::DrawPauseMenuUI() {
   DrawRectangleGradientV(0, 0, GetScreenWidth(), GetScreenHeight(), {0, 0, 0, 0}, {0, 0, 0, 180});

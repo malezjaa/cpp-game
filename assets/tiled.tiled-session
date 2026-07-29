@@ -18,6 +18,7 @@
             "dynamicWrapping": false
         },
         "tilesets/animated/bonfire.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 8
         },
@@ -49,6 +50,9 @@
             "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 3
+        },
+        "tilesets/vegetation.tsx": {
+            "dynamicWrapping": false
         }
     },
     "frame.defaultDuration": 150,

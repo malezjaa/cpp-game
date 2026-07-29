@@ -690,7 +690,7 @@ void DrawTMXTileLayer(const TmxMap *map, Rectangle viewport, TmxLayer layer, Ray
 void DrawTMXLayerTile(const TmxMap *map, Rectangle viewport, RaytmxTransform transform, uint32_t rawGid,
                       Rectangle destRect, Color tint);
 void DrawTMXObjectTile(const TmxMap *map, Rectangle viewport, uint32_t rawGid, RaytmxTransform transform, float width,
-                       float height, Color tint);
+                       float height, float rotation, Color tint);
 void DrawTMXObjectGroup(const TmxMap *map, Rectangle viewport, TmxLayer layer, RaytmxTransform transform, Color tint);
 void DrawTMXImageLayer(const TmxMap *map, Rectangle viewport, TmxLayer layer, RaytmxTransform transform, Color tint);
 bool CheckCollisionTMXTileLayerObject(const TmxMap *map, const TmxLayer *layers, uint32_t layersLength,
@@ -3468,44 +3468,90 @@ void DrawTMXTileLayer(const TmxMap *map, Rectangle viewport, TmxLayer layer, Ray
   }
 }
 
+static Vector2 RotatePointAroundPivot(Vector2 point, Vector2 pivot, float rotationDegrees) {
+  const float radians = rotationDegrees * DEG2RAD;
+  const float cosine = cosf(radians);
+  const float sine = sinf(radians);
+
+  const Vector2 relative = {
+      point.x - pivot.x,
+      point.y - pivot.y,
+  };
+
+  return {
+      pivot.x + relative.x * cosine - relative.y * sine,
+      pivot.y + relative.x * sine + relative.y * cosine,
+  };
+}
+
 void DrawTextureTile(Texture2D texture, Rectangle source, Rectangle dest, bool flipX, bool flipY, bool flipDiag,
-                     Color tint) {
-  // If the texture is invalid.
+                     float rotation, Vector2 pivot, Color tint) {
   if (texture.id == 0)
     return;
 
-  // Determine the area within the texture to be drawn.
-  // Note: The coordinates here are in the [0.0, 1.0] range where (0.0, 0.0) is the bottom-left corner of the texture,
-  // (1.0, 0.0) is the bottom-right, and (1.0, 1.0) is the top-right. In other words, the coordinates are a ratio of
-  // the dimensions making (0.5, 0.5) the center of the texture regardless of its aspect ratio.
-  const float width = (float) texture.width;
-  const float height = (float) texture.height;
-  const Vector2 sourceTopLeft = {source.x / width, source.y / height};
-  Vector2 sourceTopRight = {(source.x + source.width) / width, source.y / height};
-  Vector2 sourceBottomLeft = {source.x / width, (source.y + source.height) / height};
-  const Vector2 sourceBottomRight = {(source.x + source.width) / width, (source.y + source.height) / height};
+  const float textureWidth = (float) texture.width;
+  const float textureHeight = (float) texture.height;
 
-  if (flipDiag) // If the tile uses a diagonal flip.
-  {
-    // "The diagonal flip should flip the bottom left and top right corners of the tile..."
+  const Vector2 sourceTopLeft = {
+      source.x / textureWidth,
+      source.y / textureHeight,
+  };
+
+  Vector2 sourceTopRight = {
+      (source.x + source.width) / textureWidth,
+      source.y / textureHeight,
+  };
+
+  Vector2 sourceBottomLeft = {
+      source.x / textureWidth,
+      (source.y + source.height) / textureHeight,
+  };
+
+  const Vector2 sourceBottomRight = {
+      (source.x + source.width) / textureWidth,
+      (source.y + source.height) / textureHeight,
+  };
+
+  if (flipDiag) {
     const Vector2 temp = sourceBottomLeft;
     sourceBottomLeft = sourceTopRight;
     sourceTopRight = temp;
   }
 
-  // Determine the area on the screen to be drawn to.
-  const Vector2 destTopLeft = {dest.x, dest.y};
-  const Vector2 destTopRight = {dest.x + dest.width, dest.y};
-  const Vector2 destBottomLeft = {dest.x, dest.y + dest.height};
-  const Vector2 destBottomRight = {dest.x + dest.width, dest.y + dest.height};
+  Vector2 destTopLeft = {
+      dest.x,
+      dest.y,
+  };
+
+  Vector2 destTopRight = {
+      dest.x + dest.width,
+      dest.y,
+  };
+
+  Vector2 destBottomLeft = {
+      dest.x,
+      dest.y + dest.height,
+  };
+
+  Vector2 destBottomRight = {
+      dest.x + dest.width,
+      dest.y + dest.height,
+  };
+
+  if (rotation != 0.0f) {
+    destTopLeft = RotatePointAroundPivot(destTopLeft, pivot, rotation);
+    destTopRight = RotatePointAroundPivot(destTopRight, pivot, rotation);
+    destBottomLeft = RotatePointAroundPivot(destBottomLeft, pivot, rotation);
+    destBottomRight = RotatePointAroundPivot(destBottomRight, pivot, rotation);
+  }
 
   rlSetTexture(texture.id);
   rlBegin(RL_QUADS);
   {
     rlColor4ub(tint.r, tint.g, tint.b, tint.a);
-    rlNormal3f(0.0f, 0.0f, 1.0f); // Normal vector pointing towards viewer.
+    rlNormal3f(0.0f, 0.0f, 1.0f);
 
-    // Top-left corner of the quad.
+    // Top-left
     if (flipX && !flipY)
       rlTexCoord2f(sourceTopRight.x, sourceTopRight.y);
     else if (flipY && !flipX)
@@ -3518,7 +3564,7 @@ void DrawTextureTile(Texture2D texture, Rectangle source, Rectangle dest, bool f
     else
       rlVertex2f(destTopLeft.x, destTopLeft.y);
 
-    // Bottom-left corner of the quad.
+    // Bottom-left
     if (flipX && !flipY)
       rlTexCoord2f(sourceBottomRight.x, sourceBottomRight.y);
     else if (flipY && !flipX)
@@ -3531,7 +3577,7 @@ void DrawTextureTile(Texture2D texture, Rectangle source, Rectangle dest, bool f
     else
       rlVertex2f(destBottomLeft.x, destBottomLeft.y);
 
-    // Bottom-right corner of the quad.
+    // Bottom-right
     if (flipX && !flipY)
       rlTexCoord2f(sourceBottomLeft.x, sourceBottomLeft.y);
     else if (flipY && !flipX)
@@ -3544,7 +3590,7 @@ void DrawTextureTile(Texture2D texture, Rectangle source, Rectangle dest, bool f
     else
       rlVertex2f(destBottomRight.x, destBottomRight.y);
 
-    // Top-right corner of the quad.
+    // Top-right
     if (flipX && !flipY)
       rlTexCoord2f(sourceTopLeft.x, sourceTopLeft.y);
     else if (flipY && !flipX)
@@ -3557,8 +3603,30 @@ void DrawTextureTile(Texture2D texture, Rectangle source, Rectangle dest, bool f
     else
       rlVertex2f(destTopRight.x, destTopRight.y);
   }
+
   rlEnd();
   rlSetTexture(0);
+}
+
+static Rectangle GetRotatedRectangleAABB(Rectangle rect, Vector2 pivot, float rotation) {
+  Vector2 topLeft = {rect.x, rect.y};
+  Vector2 topRight = {rect.x + rect.width, rect.y};
+  Vector2 bottomLeft = {rect.x, rect.y + rect.height};
+  Vector2 bottomRight = {rect.x + rect.width, rect.y + rect.height};
+
+  if (rotation != 0.0f) {
+    topLeft = RotatePointAroundPivot(topLeft, pivot, rotation);
+    topRight = RotatePointAroundPivot(topRight, pivot, rotation);
+    bottomLeft = RotatePointAroundPivot(bottomLeft, pivot, rotation);
+    bottomRight = RotatePointAroundPivot(bottomRight, pivot, rotation);
+  }
+
+  const float minX = fminf(fminf(topLeft.x, topRight.x), fminf(bottomLeft.x, bottomRight.x));
+  const float maxX = fmaxf(fmaxf(topLeft.x, topRight.x), fmaxf(bottomLeft.x, bottomRight.x));
+  const float minY = fminf(fminf(topLeft.y, topRight.y), fminf(bottomLeft.y, bottomRight.y));
+  const float maxY = fmaxf(fmaxf(topLeft.y, topRight.y), fmaxf(bottomLeft.y, bottomRight.y));
+
+  return (Rectangle) {minX, minY, maxX - minX, maxY - minY};
 }
 
 void DrawTMXLayerTile(const TmxMap *map, Rectangle viewport, RaytmxTransform transform, uint32_t rawGid,
@@ -3605,11 +3673,12 @@ void DrawTMXLayerTile(const TmxMap *map, Rectangle viewport, RaytmxTransform tra
 
   // If the viewport and destination rectangles are overlapping to any degree (i.e. if the tile is visible).
   if (CheckCollisionRecs(viewport, destRect))
-    DrawTextureTile(tile.texture, tile.sourceRect, destRect, flipX, flipY, flipDiag, tint); // Draw the tile.
+    DrawTextureTile(tile.texture, tile.sourceRect, destRect, flipX, flipY, flipDiag, 0.0f, (Vector2) {0.0f, 0.0f},
+                    tint); // Draw the tile.
 }
 
 void DrawTMXObjectTile(const TmxMap *map, Rectangle viewport, uint32_t rawGid, RaytmxTransform transform, float width,
-                       float height, Color tint) {
+                       float height, float rotation, Color tint) {
   if ((map == NULL) || (width <= 0) || (height <= 0) || (tint.a == 0))
     return;
 
@@ -3647,10 +3716,13 @@ void DrawTMXObjectTile(const TmxMap *map, Rectangle viewport, uint32_t rawGid, R
   // (X, Y) to the be top-left corner of any area but the TMX format considers it the bottom-left.
   const Rectangle destRect = {transform.position.x + tile.offset.x, transform.position.y + tile.offset.y - height,
                               width, height};
+  const Vector2 pivot = {transform.position.x, transform.position.y};
+  const Rectangle visibleRect = GetRotatedRectangleAABB(destRect, pivot, rotation);
 
   // If the viewport and destination rectangles are overlapping to any degree (i.e. if the tile is visible).
-  if (CheckCollisionRecs(viewport, destRect))
-    DrawTextureTile(tile.texture, tile.sourceRect, destRect, flipX, flipY, flipDiag, tint); // Draw the tile.
+  if (CheckCollisionRecs(viewport, visibleRect))
+    DrawTextureTile(tile.texture, tile.sourceRect, destRect, flipX, flipY, flipDiag, rotation, pivot,
+                    tint); // Draw the tile.
 }
 
 void DrawTMXObjectGroup(const TmxMap *map, Rectangle viewport, TmxLayer layer, RaytmxTransform transform, Color tint) {
@@ -3671,7 +3743,8 @@ void DrawTMXObjectGroup(const TmxMap *map, Rectangle viewport, TmxLayer layer, R
       transform2.position.x += (float) object.x;
       transform2.position.y += (float) object.y;
       // Note: This draw method handles culling so it doesn't need to be done here.
-      DrawTMXObjectTile(map, viewport, object.gid, transform2, (float) object.width, (float) object.height, tint);
+      DrawTMXObjectTile(map, viewport, object.gid, transform2, (float) object.width, (float) object.height,
+                        (float) object.rotation, tint);
     } else // If the object is any type other than a tile.
     {
       Rectangle aabb2 = object.aabb;

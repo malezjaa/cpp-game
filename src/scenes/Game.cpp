@@ -23,7 +23,7 @@ Game::Game(Camera2D &camera, SceneManager &scene_manager) :
                                                   }),
     world{} {
 
-  player = Player::CreateEntity(registry, Vector2{1024.0f, 500.0f});
+  player = Player::CreateEntity(registry, Vector2{1024.0f, 600.0f});
 }
 
 void Game::Update() {
@@ -50,6 +50,8 @@ void Game::UpdateGame() {
   UpdateMovementAndCollisions(registry, world.GetMap(), deltaTime, scene_manager.dev_tools.colliders);
   UpdateMovementAnimations(registry);
   UpdateAnimations(registry, deltaTime);
+
+  AnimateTMX(world.GetMap().tmx_map);
 
   const auto &[pos] = registry.get<Position>(player);
 

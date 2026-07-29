@@ -1,8 +1,44 @@
 #include "World.h"
 
+#include <algorithm>
 #include <iostream>
 
 #include "../third_party/raytmx.h"
+
+#include <array>
+#include <cmath>
+#include <span>
+
+std::vector<Vector2> GetRotatedRectanglePoints(const TmxObject &obj) {
+  const float radians = static_cast<float>(obj.rotation) * DEG2RAD;
+  const float cosine = std::cos(radians);
+  const float sine = std::sin(radians);
+
+  const Vector2 origin{static_cast<float>(obj.x), static_cast<float>(obj.y)};
+
+  const auto width = static_cast<float>(obj.width);
+  const auto height = static_cast<float>(obj.height);
+  const std::array<Vector2, 4> localPoints =
+      obj.type == OBJECT_TYPE_TILE
+          ? std::array<Vector2, 4>{{{0.0f, -height}, {width, -height}, {width, 0.0f}, {0.0f, 0.0f}}}
+          : std::array<Vector2, 4>{{{0.0f, 0.0f}, {width, 0.0f}, {width, height}, {0.0f, height}}};
+
+  std::vector<Vector2> points;
+  points.reserve(localPoints.size());
+
+  for (const auto [x, y]: localPoints) {
+    points.push_back({origin.x + x * cosine - y * sine, origin.y + x * sine + y * cosine});
+  }
+
+  return points;
+}
+
+bool ColliderEnabled(std::span<const TmxProperty> properties) {
+  return std::ranges::any_of(properties, [](const TmxProperty &property) {
+    return property.name != nullptr && std::string_view{property.name} == "collide" &&
+           property.type == PROPERTY_TYPE_BOOL && property.boolValue;
+  });
+}
 
 World::World() {
   map = Map{.tmx_map = LoadTMX("../assets/maps/map.tmx"), .grid = BuildGrid{}};
@@ -31,6 +67,11 @@ World::World() {
           }
 
           map.points.emplace_back(std::move(points));
+          continue;
+        }
+
+        if (ColliderEnabled({obj.properties, obj.propertiesLength})) {
+          map.points.emplace_back(GetRotatedRectanglePoints(obj));
           continue;
         }
 

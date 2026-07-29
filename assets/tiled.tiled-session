@@ -14,20 +14,45 @@
                 "y": 262.5
             }
         },
+        "tilesets/Wire Fence.tsx": {
+            "dynamicWrapping": false
+        },
+        "tilesets/animated/bonfire.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 8
+        },
+        "tilesets/animated/campfire.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 8
+        },
+        "tilesets/buildings.tsx": {
+            "dynamicWrapping": false
+        },
+        "tilesets/containers.tsx": {
+            "dynamicWrapping": true
+        },
         "tilesets/interior_props.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 2
         },
         "tilesets/interior_walls.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1.5,
             "scaleInEditor": 2
         },
+        "tilesets/objects.tsx": {
+            "dynamicWrapping": true
+        },
         "tilesets/tiles.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 3
         }
     },
-    "last.imagePath": "C:/Users/poreb/projects/2d-game/assets/tilesets",
+    "frame.defaultDuration": 150,
+    "last.imagePath": "C:/Users/poreb/projects/2d-game/assets/objects/Container",
     "map.height": 100,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
@@ -40,7 +65,10 @@
         "maps/map.tmx"
     ],
     "project": "tiled.tiled-project",
+    "property.type": "bool",
     "recentFiles": [
+        "tilesets/animated/bonfire.tsx",
+        "tilesets/animated/campfire.tsx",
         "maps/map.tmx",
         "tilesets/tiles.tsx",
         "tilesets/interior_props.tsx",
@@ -50,5 +78,6 @@
     "tileset.tileSize": {
         "height": 16,
         "width": 16
-    }
+    },
+    "tileset.type": 1
 }

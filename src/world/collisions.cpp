@@ -3,7 +3,7 @@
 #include <entt/entity/entity.hpp>
 #include <entt/entity/registry.hpp>
 
-#include "components.h"
+#include "../ecs/components.h"
 
 Rectangle GetBounds(const Position &position, const Collider &collider) {
   return {
@@ -33,25 +33,25 @@ bool CheckCollisionLineRec(const Vector2 start, const Vector2 end, const Rectang
 }
 
 bool CollidesWithMap(entt::registry &registry, const entt::entity &entity, const Rectangle bounds, const Map &map) {
-  for (const Rectangle obstacle: map.collisions) {
-    if (CheckCollisionRecs(bounds, obstacle)) {
-      return true;
-    }
-  }
-
-  for (const auto &points: map.points) {
-    if (points.size() < 2) {
-      continue;
-    }
-
-    for (std::size_t i = 0; i + 1 < points.size(); ++i) {
-      if (CheckCollisionLineRec(points[i], points[i + 1], bounds)) {
+  for (const auto &[points, col_points]: map.colliders) {
+    if (auto obj_bounds = col_points) {
+      if (CheckCollisionRecs(obj_bounds.value(), bounds)) {
         return true;
       }
-    }
+    } else {
+      if (points.size() < 2) {
+        continue;
+      }
 
-    if (points.size() > 2 && CheckCollisionLineRec(points.back(), points.front(), bounds)) {
-      return true;
+      for (std::size_t i = 0; i + 1 < points.size(); ++i) {
+        if (CheckCollisionLineRec(points[i], points[i + 1], bounds)) {
+          return true;
+        }
+      }
+
+      if (points.size() > 2 && CheckCollisionLineRec(points.back(), points.front(), bounds)) {
+        return true;
+      }
     }
   }
 

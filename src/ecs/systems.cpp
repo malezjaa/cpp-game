@@ -1,8 +1,8 @@
 #include <entt/entity/registry.hpp>
 
 #include "../animations.h"
-#include "Components.h"
-#include "collisions.h"
+#include "../world/collisions.h"
+#include "components.h"
 
 void UpdateMovement(entt::registry &registry, const float deltaTime) {
   for (const auto view = registry.view<Position, Velocity>(entt::exclude<Collider>); const entt::entity entity: view) {

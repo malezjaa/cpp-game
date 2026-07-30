@@ -5,10 +5,10 @@
 
 #include "../Player.h"
 #include "../animations.h"
-#include "../ecs/collisions.h"
 #include "../ecs/components.h"
 #include "../ecs/systems.h"
 #include "../hud/HealthBar.h"
+#include "../world/collisions.h"
 #include "imgui.h"
 
 Game::Game(Camera2D &camera, SceneManager &scene_manager) :
@@ -90,17 +90,20 @@ void Game::Draw() {
 
 void Game::DrawDevHelpers() {
   if (scene_manager.dev_tools.draw_colliders) {
-    for (const Rectangle &rect: world.GetMap().collisions) {
-      DrawRectangleLinesEx(rect, .5f, ORANGE);
-    }
 
-    for (const auto &points: world.GetMap().points) {
-      if (points.size() < 2) {
-        continue;
+    for (const auto &[points, obj_bounds]: world.GetMap().colliders) {
+      if (auto bounds = obj_bounds) {
+        DrawRectangleLinesEx(*bounds, .5f, ORANGE);
+      } else {
+
+
+        if (points.size() < 2) {
+          continue;
+        }
+
+        DrawLineStrip(points.data(), static_cast<int>(points.size()), ORANGE);
+        DrawLineV(points.back(), points.front(), ORANGE);
       }
-
-      DrawLineStrip(points.data(), static_cast<int>(points.size()), ORANGE);
-      DrawLineV(points.back(), points.front(), ORANGE);
     }
 
     for (const auto &collider: registry.view<Collider, Position>()) {

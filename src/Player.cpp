@@ -2,10 +2,10 @@
 
 #include "Textures.h"
 #include "animations.h"
-#include "ecs/collisions.h"
 #include "ecs/components.h"
 #include "ecs/systems.h"
 #include "world/Map.h"
+#include "world/collisions.h"
 
 float FrameWidth(const FacingDirection direction) {
   return direction == FacingDirection::Left || direction == FacingDirection::Right ? 10.0f : 11.0f;
@@ -31,8 +31,8 @@ entt::entity Player::CreateEntity(entt::registry &registry, const Vector2 positi
   registry.emplace<Position>(player, Position{position});
   registry.emplace<Velocity>(player);
   registry.emplace<Collider>(player, Collider{
-                                         .offset = {-1.0f, 11.0f},
-                                         .size = {12.0f, 5.0f},
+                                         .offset = {1.0f, 11.0f},
+                                         .size = {8.0f, 5.0f},
                                      });
   registry.emplace<Health>(player, Health{100, 100});
   registry.emplace<PlayerControlled>(player);

@@ -4,8 +4,8 @@
 #define INC_2D_GAME_COLLISIONS_H
 #include <entt/entity/registry.hpp>
 
-#include "../world/Map.h"
-#include "components.h"
+#include "../ecs/components.h"
+#include "Map.h"
 
 struct Collider {
   Vector2 offset{};

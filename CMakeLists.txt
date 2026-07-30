@@ -96,8 +96,8 @@ set(SOURCES src/main.cpp
         src/ui/NineSlice.cpp
         src/third_party/raytmx.h
         src/third_party/hoxml.h
-        src/ecs/collisions.cpp
-        src/ecs/collisions.h
+        src/world/collisions.cpp
+        src/world/collisions.h
         src/hud/HealthBar.cpp
         src/hud/HealthBar.h
         src/hud/HealthBar.cpp

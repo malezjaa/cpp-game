@@ -1,6 +1,7 @@
 
 #ifndef INC_2D_GAME_WORLD_H
 #define INC_2D_GAME_WORLD_H
+#include <string_view>
 #include <unordered_map>
 #include "Map.h"
 
@@ -15,6 +16,10 @@ public:
 
   World();
   ~World() { UnloadTMX(map.tmx_map); }
+
+  const TmxObjectGroup *FindObjectGroup(std::string_view name) const;
+  void LoadCollisions();
+  void LoadMapTransitions();
 
 private:
   Map map;

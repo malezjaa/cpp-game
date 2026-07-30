@@ -40,10 +40,6 @@ void SceneManager::DrawDevTools() {
   const auto name = magic_enum::enum_name(current_scene);
   ImGui::Text("Scene: %.*s", static_cast<int>(name.size()), name.data());
   ImGui::Text("Profile: %s", BUILD_PROFILE);
-  ImGui::Checkbox("Collisions", &dev_tools.colliders);
-  ImGui::Checkbox("Draw colliders", &dev_tools.draw_colliders);
-  ImGui::Checkbox("Draw grid map", &dev_tools.draw_grid_map);
-
   ImGui::End();
 }
 

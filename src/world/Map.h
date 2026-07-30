@@ -5,6 +5,15 @@
 
 #include <optional>
 
+enum class MapId { World };
+
+constexpr const char *MapIdToPath(const MapId id) {
+  switch (id) {
+    case MapId::World:
+      return "../assets/maps/map.tmx";
+  }
+}
+
 enum class CellState { Free, Blocked, Reserved };
 
 struct Cell {

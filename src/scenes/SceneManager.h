@@ -21,6 +21,9 @@ struct DevTools {
   bool draw_colliders = false;
   bool colliders = true;
   bool draw_grid_map = false;
+  int aabb_colliders = 0;
+  int entity_colliders = 0;
+  int point_colliders = 0;
 };
 
 class SceneManager {

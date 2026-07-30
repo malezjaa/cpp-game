@@ -115,10 +115,11 @@ void World::LoadMapTransitions() {
   }
 }
 
-World::World() {
-  map = Map{.tmx_map = LoadTMX("../assets/maps/map.tmx"), .grid = BuildGrid{}};
+void World::LoadMap(const MapId id, DevTools &dev_tools) {
+  const char *path = MapIdToPath(id);
+  map = Map{.tmx_map = LoadTMX(path), .grid = BuildGrid{}};
   if (map.tmx_map == nullptr) {
-    TraceLog(LOG_ERROR, "Could not load map");
+    TraceLog(LOG_ERROR, "Could not load map: %s", path);
   }
 
   // Width and height from tmx map are actually number of tiles not pixels
@@ -127,6 +128,11 @@ World::World() {
 
   LoadCollisions();
   LoadMapTransitions();
+
+  dev_tools.aabb_colliders =
+      std::ranges::count_if(map.colliders, [](const MapCollider &c) { return c.bounds.has_value(); });
+  dev_tools.point_colliders =
+      std::ranges::count_if(map.colliders, [](const MapCollider &c) { return !c.bounds.has_value(); });
 }
 
 void World::Draw(const Camera2D *camera) const { DrawTMX(map.tmx_map, camera, nullptr, 0, 0, WHITE); }

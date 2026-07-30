@@ -25,6 +25,7 @@ Game::Game(Camera2D &camera, SceneManager &scene_manager) :
     world{} {
 
   player = Player::CreateEntity(registry, Vector2{1024.0f, 600.0f});
+  world.LoadMap(MapId::World, scene_manager.dev_tools);
 }
 
 void Game::Update() {
@@ -64,6 +65,8 @@ void Game::UpdateGame() {
       std::round(pos.y) + HALF_PLAYER_FRAME_SIZE,
   };
   camera.offset = {static_cast<float>(GetScreenWidth()) / 2.0f, static_cast<float>(GetScreenHeight()) / 2.0f};
+
+  scene_manager.dev_tools.entity_colliders = registry.view<Collider>().size();
 }
 
 void Game::Draw() {
@@ -78,10 +81,23 @@ void Game::Draw() {
 
   EndMode2D();
 
-  if (scene_manager.dev_tools.enabled) {
+  auto &dev_tools = scene_manager.dev_tools;
+  if (dev_tools.enabled) {
     const auto &[pos] = registry.get<Position>(player);
     ImGui::Begin("Player");
     ImGui::Text("Coordinates: (%.2f, %.2f)", pos.x, pos.y);
+    ImGui::End();
+
+    ImGui::Begin("Collisions");
+    ImGui::Text("AABB colliders: %d", dev_tools.aabb_colliders);
+    ImGui::Text("Entity colliders: %d", dev_tools.entity_colliders);
+    ImGui::Text("Point colliders: %d", dev_tools.point_colliders);
+
+    ImGui::Separator();
+
+    ImGui::Checkbox("Collisions", &dev_tools.colliders);
+    ImGui::Checkbox("Draw colliders", &dev_tools.draw_colliders);
+    ImGui::Checkbox("Draw grid map", &dev_tools.draw_grid_map);
     ImGui::End();
   }
 
@@ -90,13 +106,10 @@ void Game::Draw() {
 
 void Game::DrawDevHelpers() {
   if (scene_manager.dev_tools.draw_colliders) {
-
     for (const auto &[points, obj_bounds]: world.GetMap().colliders) {
       if (auto bounds = obj_bounds) {
         DrawRectangleLinesEx(*bounds, .5f, ORANGE);
       } else {
-
-
         if (points.size() < 2) {
           continue;
         }

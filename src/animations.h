@@ -1,35 +1,12 @@
-#ifndef INC_2D_GAME_COMPONENTS_H
-#define INC_2D_GAME_COMPONENTS_H
+#ifndef INC_2D_GAME_ANIMATIONS_H
+#define INC_2D_GAME_ANIMATIONS_H
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <entt/entity/registry.hpp>
 #include <raylib.h>
 
-#include "../Textures.h"
-
-struct Position {
-  Vector2 value{};
-};
-
-struct Velocity {
-  Vector2 value{};
-};
-
-struct Sprite {
-  TextureId id;
-  Rectangle source{};
-  float scale = 1.0f;
-};
-
-struct Health {
-  int current = 100;
-  int maximum = 100;
-};
-
-struct MoveTarget {
-  Vector2 target;
-  float speed;
-  float stopDistance = 2.0f;
-};
-
-struct PlayerControlled {};
+#include "Textures.h"
 
 enum class AnimationState : std::uint8_t {
   Idle,
@@ -74,4 +51,11 @@ struct AnimatedSprite {
   float elapsed = 0.0f;
   float scale = 1.0f;
 };
+
+AnimationClip MakeClip(float frameWidth, float frameHeight, std::size_t frameCount, float frameDuration);
+
+void SetAnimationState(AnimatedSprite &sprite, AnimationState newState);
+void UpdateAnimations(entt::registry &registry, float deltaTime);
+void DrawAnimatedSprites(entt::registry &registry, const Textures &textures);
+void UpdateMovementAnimations(entt::registry &registry);
 #endif

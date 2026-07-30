@@ -1,14 +1,14 @@
-#include "HealthBar.h"
+#include "../hud/HealthBar.h"
 
 #include <format>
 
 #include "../Textures.h"
-#include "../ecs/Components.h"
-#include "UIManager.h"
+#include "../ecs/components.h"
+#include "../ui/UIManager.h"
 
 void DrawHealthBar(const TextRenderer &text_renderer, const Textures &textures, const Health &health) {
   const float uiScale = UIManager::Scale();
-  const float textureScale = uiScale * 2.0f;
+  const float textureScale = uiScale * 2.3f;
 
   const auto &hpTexture = textures.HP();
   const auto &barTexture = textures.HPBar();

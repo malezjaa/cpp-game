@@ -2,11 +2,10 @@
 
 #ifndef INC_2D_GAME_COLLISIONS_H
 #define INC_2D_GAME_COLLISIONS_H
-#include <Vector2.hpp>
 #include <entt/entity/registry.hpp>
 
 #include "../world/Map.h"
-#include "Components.h"
+#include "components.h"
 
 struct Collider {
   Vector2 offset{};

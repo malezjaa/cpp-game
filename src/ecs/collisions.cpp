@@ -3,7 +3,7 @@
 #include <entt/entity/entity.hpp>
 #include <entt/entity/registry.hpp>
 
-#include "Components.h"
+#include "components.h"
 
 Rectangle GetBounds(const Position &position, const Collider &collider) {
   return {

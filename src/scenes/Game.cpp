@@ -2,13 +2,13 @@
 
 #include <iostream>
 #include <magic_enum/magic_enum.hpp>
-#include <map>
 
 #include "../Player.h"
-#include "../ecs/Components.h"
+#include "../animations.h"
 #include "../ecs/collisions.h"
+#include "../ecs/components.h"
 #include "../ecs/systems.h"
-#include "../ui/HealthBar.h"
+#include "../hud/HealthBar.h"
 #include "imgui.h"
 
 Game::Game(Camera2D &camera, SceneManager &scene_manager) :

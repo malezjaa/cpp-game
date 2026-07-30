@@ -1,30 +1,11 @@
 #include "Player.h"
 
 #include "Textures.h"
-#include "ecs/Components.h"
+#include "animations.h"
 #include "ecs/collisions.h"
+#include "ecs/components.h"
 #include "ecs/systems.h"
 #include "world/Map.h"
-
-
-AnimationClip MakeClip(const float frameWidth, const float frameHeight, const std::size_t frameCount,
-                       const float frameDuration) {
-  AnimationClip clip{
-      .frameCount = frameCount,
-      .frameDuration = frameDuration,
-  };
-
-  for (std::size_t frame = 0; frame < frameCount; ++frame) {
-    clip.frames[frame] = {
-        frameWidth * static_cast<float>(frame),
-        0.0f,
-        frameWidth,
-        frameHeight,
-    };
-  }
-
-  return clip;
-}
 
 float FrameWidth(const FacingDirection direction) {
   return direction == FacingDirection::Left || direction == FacingDirection::Right ? 10.0f : 11.0f;

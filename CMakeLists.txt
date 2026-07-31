@@ -105,6 +105,10 @@ set(SOURCES src/main.cpp
         src/npc/NPC.h
         src/animations.cpp
         src/animations.h
+        src/npc/NPCRegistry.cpp
+        src/npc/NPCRegistry.h
+        src/npc/NpcDefinition.cpp
+        src/npc/NpcDefinition.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

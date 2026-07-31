@@ -2,6 +2,8 @@
 #define INC_2D_GAME_COMPONENTS_H
 #include <raylib.h>
 
+#include "../npc/NpcDefinition.h"
+
 struct Position {
   Vector2 value{};
 };
@@ -22,4 +24,7 @@ struct MoveTarget {
 };
 
 struct PlayerControlled {};
+struct NpcEntity {
+  NpcId id;
+};
 #endif

@@ -1,21 +1,22 @@
 {
     "activeFile": "maps/map.tmx",
     "expandedProjectPaths": [
-        "maps",
+        ".",
         "tilesets",
-        "."
+        "maps"
     ],
     "fileStates": {
         "maps/map.tmx": {
-            "scale": 1,
-            "selectedLayer": 5,
+            "scale": 16,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 239.5,
-                "y": 262.5
+                "x": 443.9375,
+                "y": 350.78125
             }
         },
         "tilesets/Wire Fence.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1
         },
         "tilesets/animated/bonfire.tsx": {
             "dynamicWrapping": false,
@@ -28,10 +29,14 @@
             "scaleInEditor": 8
         },
         "tilesets/buildings.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1
         },
         "tilesets/containers.tsx": {
             "dynamicWrapping": true
+        },
+        "tilesets/ground_wall_tiles.tsx": {
+            "scaleInDock": 1
         },
         "tilesets/interior_props.tsx": {
             "dynamicWrapping": false,
@@ -44,7 +49,8 @@
             "scaleInEditor": 2
         },
         "tilesets/objects.tsx": {
-            "dynamicWrapping": true
+            "dynamicWrapping": true,
+            "scaleInDock": 1
         },
         "tilesets/tiles.tsx": {
             "dynamicWrapping": false,
@@ -52,7 +58,8 @@
             "scaleInEditor": 3
         },
         "tilesets/vegetation.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1
         }
     },
     "frame.defaultDuration": 150,
@@ -71,12 +78,12 @@
     "project": "tiled.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "tilesets/animated/bonfire.tsx",
-        "tilesets/animated/campfire.tsx",
-        "maps/map.tmx",
         "tilesets/tiles.tsx",
         "tilesets/interior_props.tsx",
-        "tilesets/interior_walls.tsx"
+        "tilesets/interior_walls.tsx",
+        "maps/map.tmx",
+        "tilesets/animated/bonfire.tsx",
+        "tilesets/animated/campfire.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

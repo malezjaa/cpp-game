@@ -22,7 +22,7 @@ Game::Game(Camera2D &camera, SceneManager &scene_manager) :
                                                           [this] { this->scene_manager.UI().ShowQuitDialog(); },
                                                       },
                                                   }),
-    world{} {
+    world{registry} {
 
   player = Player::CreateEntity(registry, Vector2{1024.0f, 600.0f});
   world.LoadMap(MapId::World, scene_manager.dev_tools);

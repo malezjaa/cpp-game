@@ -13,15 +13,19 @@ using raylib::Window;
 
 int main() {
   try {
-    rlImGuiSetup(true);
-
     constexpr int screenWidth = UIManager::base_width;
     constexpr int screenHeight = UIManager::base_height;
 
-    Window::SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_FULLSCREEN_MODE);
     Window window(screenWidth, screenHeight, "paradigm");
+    Window::SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_BORDERLESS_WINDOWED_MODE);
+    
+    int monitor = GetCurrentMonitor();
+    SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
+    SetWindowPosition(0, 0);
     SetExitKey(KEY_NULL);
     SetTextLineSpacing(16);
+
+    rlImGuiSetup(true);
 
     Camera2D camera{};
     camera.offset = {screenWidth / 2.0f, screenHeight / 2.0f};

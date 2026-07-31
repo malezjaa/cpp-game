@@ -131,8 +131,7 @@ void World::LoadMap(const MapId id, DevTools &dev_tools) {
 
   dev_tools.aabb_colliders =
       std::ranges::count_if(map.colliders, [](const MapCollider &c) { return c.bounds.has_value(); });
-  dev_tools.point_colliders =
-      std::ranges::count_if(map.colliders, [](const MapCollider &c) { return !c.bounds.has_value(); });
+  dev_tools.point_colliders = map.colliders.size() - dev_tools.aabb_colliders;
 }
 
 void World::Draw(const Camera2D *camera) const { DrawTMX(map.tmx_map, camera, nullptr, 0, 0, WHITE); }

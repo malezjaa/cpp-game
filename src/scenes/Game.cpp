@@ -8,6 +8,7 @@
 #include "../ecs/components.h"
 #include "../ecs/systems.h"
 #include "../hud/HealthBar.h"
+#include "../npc/nametags.h"
 #include "../world/collisions.h"
 #include "imgui.h"
 
@@ -76,6 +77,7 @@ void Game::Draw() {
   {
     world.Draw(&camera);
     DrawAnimatedSprites(registry, scene_manager.textures);
+    DrawNameTags(registry, scene_manager.UI().Text());
     DrawDevHelpers();
   }
 

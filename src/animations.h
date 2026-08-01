@@ -58,4 +58,17 @@ void SetAnimationState(AnimatedSprite &sprite, AnimationState newState);
 void UpdateAnimations(entt::registry &registry, float deltaTime);
 void DrawAnimatedSprites(entt::registry &registry, const Textures &textures);
 void UpdateMovementAnimations(entt::registry &registry);
+
+inline Vector2 GetSpriteSize(const AnimatedSprite &sprite) {
+  const auto stateIndex = std::to_underlying(sprite.state);
+  const auto facingIndex = std::to_underlying(sprite.facing);
+
+  const AnimationClip &clip = sprite.clips[stateIndex][facingIndex];
+  const Rectangle &frame = clip.frames[sprite.currentFrame];
+
+  return {
+      std::abs(frame.width) * sprite.scale,
+      std::abs(frame.height) * sprite.scale,
+  };
+}
 #endif

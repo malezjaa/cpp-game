@@ -9,8 +9,7 @@
 
 class World {
 public:
-  void LoadMap(MapId, DevTools &);
-  void Update(float dt);
+  void LoadMap(MapId, DevToolsSettings &);
   void Draw(const Camera2D *camera) const;
 
   NpcRegistry &Npcs() { return npcs; }

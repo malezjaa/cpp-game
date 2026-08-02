@@ -16,9 +16,9 @@ int main() {
     constexpr int screenWidth = UIManager::base_width;
     constexpr int screenHeight = UIManager::base_height;
 
-    Window window(screenWidth, screenHeight, "paradigm");
     Window::SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_BORDERLESS_WINDOWED_MODE);
-    
+    Window window(screenWidth, screenHeight, "paradigm");
+
     int monitor = GetCurrentMonitor();
     SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
     SetWindowPosition(0, 0);

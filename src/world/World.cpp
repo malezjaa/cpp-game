@@ -9,6 +9,8 @@
 #include <cmath>
 #include <span>
 
+#include "tmx_properties.h"
+
 namespace {
   std::vector<Vector2> GetLocalObjectPoints(const TmxObject &obj) {
     const auto width = static_cast<float>(obj.width);
@@ -64,12 +66,6 @@ namespace {
   }
 } // namespace
 
-bool ColliderEnabled(std::span<const TmxProperty> properties) {
-  return std::ranges::any_of(properties, [](const TmxProperty &property) {
-    return property.name != nullptr && std::string_view{property.name} == "collide" &&
-           property.type == PROPERTY_TYPE_BOOL && property.boolValue;
-  });
-}
 
 const TmxObjectGroup *World::FindObjectGroup(const std::string_view name) const {
   const std::span<const TmxLayer> layers{
@@ -97,7 +93,7 @@ void World::LoadCollisions() {
 
   if (const TmxObjectGroup *decors = FindObjectGroup("Decorations")) {
     for (const TmxObject &obj: std::span<const TmxObject>{decors->objects, decors->objectsLength}) {
-      if (ColliderEnabled({obj.properties, obj.propertiesLength})) {
+      if (PropertyEnabled({obj.properties, obj.propertiesLength}, "collide")) {
         AddCollider(map.colliders, obj);
       }
     }
@@ -111,11 +107,30 @@ void World::LoadMapTransitions() {
     return;
   }
 
-  for (const TmxObject &obj: std::span<const TmxObject>{group->objects, group->objectsLength}) {
+  const auto objects = std::span<const TmxObject>{group->objects, group->objectsLength};
+
+  for (const TmxObject &obj: objects) {
+    const auto map_name = GetStringProperty({obj.properties, obj.propertiesLength}, "map");
+
+    if (!map_name) {
+      TraceLog(LOG_WARNING, "Object in transitions layer has no map property");
+      continue;
+    }
+
+    auto transition_it = std::ranges::find(map.transitions, *map_name, &MapTransition::map_id);
+
+    if (transition_it == map.transitions.end()) {
+      transition_it = map.transitions.emplace(map.transitions.end(), MapTransition{
+                                                                         .transition_points = {},
+                                                                         .map_id = std::string{*map_name},
+                                                                     });
+    }
+
+    AddCollider(transition_it->transition_points, obj);
   }
 }
 
-void World::LoadMap(const MapId id, DevTools &dev_tools) {
+void World::LoadMap(const MapId id, DevToolsSettings &dev_tools) {
   const char *path = MapIdToPath(id);
   map = Map{.tmx_map = LoadTMX(path), .grid = BuildGrid{}};
   if (map.tmx_map == nullptr) {

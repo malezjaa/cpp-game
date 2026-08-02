@@ -9,7 +9,6 @@
 void DrawNameTags(entt::registry &registry, const TextRenderer &text_renderer) {
   const float scale = UIManager::Scale();
   const float text_size = 3.5f * scale;
-  const float spacing = 0.3f;
 
   const Vector2 padding{
       1.0f * scale,
@@ -17,6 +16,7 @@ void DrawNameTags(entt::registry &registry, const TextRenderer &text_renderer) {
   };
 
   for (const auto &entity: registry.view<AnimatedSprite, Position, NpcEntity>()) {
+    constexpr float spacing = 0.3f;
     auto &[pos] = registry.get<Position>(entity);
     auto sprite_size = GetSpriteSize(registry.get<AnimatedSprite>(entity));
     const auto &[name] = GetNpcDefinition(registry.get<NpcEntity>(entity).id);

@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "../ui/UIManager.h"
+#include "DevTools.h"
 #include "rlImGui.h"
 enum class SceneType { Game, MainMenu };
 
@@ -14,16 +15,6 @@ public:
 
   virtual void Update() = 0;
   virtual void Draw() = 0;
-};
-
-struct DevTools {
-  bool enabled = false;
-  bool draw_colliders = false;
-  bool colliders = true;
-  bool draw_grid_map = false;
-  int aabb_colliders = 0;
-  int entity_colliders = 0;
-  int point_colliders = 0;
 };
 
 class SceneManager {

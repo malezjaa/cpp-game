@@ -111,6 +111,12 @@ set(SOURCES src/main.cpp
         src/npc/NpcDefinition.h
         src/npc/nametags.cpp
         src/npc/nametags.h
+        src/world/map_transitions.cpp
+        src/world/map_transitions.h
+        src/world/tmx_properties.cpp
+        src/world/tmx_properties.h
+        src/scenes/DevTools.cpp
+        src/scenes/DevTools.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

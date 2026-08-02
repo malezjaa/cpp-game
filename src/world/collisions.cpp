@@ -4,6 +4,7 @@
 #include <entt/entity/registry.hpp>
 
 #include "../ecs/components.h"
+#include "World.h"
 
 Rectangle GetBounds(const Position &position, const Collider &collider) {
   return {
@@ -32,8 +33,9 @@ bool CheckCollisionLineRec(const Vector2 start, const Vector2 end, const Rectang
          CheckCollisionLines(start, end, bottomLeft, topLeft, &collisionPoint);
 }
 
-bool CollidesWithMap(entt::registry &registry, const entt::entity &entity, const Rectangle bounds, const Map &map) {
-  for (const auto &[points, col_points]: map.colliders) {
+bool CheckCollisions(const std::vector<MapCollider> &colliders, entt::registry &registry, const entt::entity &entity,
+                     const Rectangle bounds) {
+  for (const auto &[points, col_points]: colliders) {
     if (auto obj_bounds = col_points) {
       if (CheckCollisionRecs(obj_bounds.value(), bounds)) {
         return true;
@@ -78,14 +80,14 @@ void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, const
 
     position.value.x += velocity.value.x * deltaTime;
 
-    if (CollidesWithMap(registry, entity, GetBounds(position, collider), map) && handle_collisions) {
+    if (CheckCollisions(map.colliders, registry, entity, GetBounds(position, collider)) && handle_collisions) {
       position.value.x -= velocity.value.x * deltaTime;
       velocity.value.x = 0.0f;
     }
 
     position.value.y += velocity.value.y * deltaTime;
 
-    if (CollidesWithMap(registry, entity, GetBounds(position, collider), map) && handle_collisions) {
+    if (CheckCollisions(map.colliders, registry, entity, GetBounds(position, collider)) && handle_collisions) {
       position.value.y -= velocity.value.y * deltaTime;
       velocity.value.y = 0.0f;
     }

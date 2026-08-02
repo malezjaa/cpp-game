@@ -14,5 +14,8 @@ struct Collider {
 
 void UpdateMovementAndCollisions(entt::registry &registry, const Map &map, float deltaTime, bool handle_collisions);
 Rectangle GetBounds(const Position &position, const Collider &collider);
+bool CheckCollisionLineRec(Vector2 start, Vector2 end, Rectangle rect);
+bool CheckCollisions(const std::vector<MapCollider> &colliders, entt::registry &registry, const entt::entity &entity,
+                     Rectangle bounds);
 
 #endif

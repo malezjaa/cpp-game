@@ -1,5 +1,6 @@
 #ifndef INC_2D_GAME_MAP_H
 #define INC_2D_GAME_MAP_H
+#include <string>
 #include "../third_party/raytmx.h"
 #include "tiles.h"
 
@@ -35,10 +36,16 @@ struct MapCollider {
   std::optional<Rectangle> bounds;
 };
 
+struct MapTransition {
+  std::vector<MapCollider> transition_points;
+  std::string map_id;
+};
+
 struct Map {
   TmxMap *tmx_map;
   BuildGrid grid;
   std::vector<MapCollider> colliders;
+  std::vector<MapTransition> transitions;
   uint32_t width;
   uint32_t height;
 };

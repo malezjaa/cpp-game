@@ -6,12 +6,20 @@
         "maps"
     ],
     "fileStates": {
-        "maps/map.tmx": {
-            "scale": 16,
-            "selectedLayer": 9,
+        "maps/factory.tmx": {
+            "scale": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 443.9375,
-                "y": 350.78125
+                "x": 797.75,
+                "y": 1498.75
+            }
+        },
+        "maps/map.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 11,
+            "viewCenter": {
+                "x": 859.6666666666666,
+                "y": 623.6666666666666
             }
         },
         "tilesets/Wire Fence.tsx": {
@@ -76,12 +84,12 @@
         "maps/map.tmx"
     ],
     "project": "tiled.tiled-project",
-    "property.type": "bool",
+    "property.type": "string",
     "recentFiles": [
+        "maps/map.tmx",
         "tilesets/tiles.tsx",
         "tilesets/interior_props.tsx",
         "tilesets/interior_walls.tsx",
-        "maps/map.tmx",
         "tilesets/animated/bonfire.tsx",
         "tilesets/animated/campfire.tsx"
     ],

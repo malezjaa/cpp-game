@@ -10,6 +10,7 @@
 #include "../hud/HealthBar.h"
 #include "../npc/nametags.h"
 #include "../world/collisions.h"
+#include "../world/map_transitions.h"
 #include "imgui.h"
 
 Game::Game(Camera2D &camera, SceneManager &scene_manager) :
@@ -26,7 +27,7 @@ Game::Game(Camera2D &camera, SceneManager &scene_manager) :
     world{registry} {
 
   player = Player::CreateEntity(registry, Vector2{1024.0f, 600.0f});
-  world.LoadMap(MapId::World, scene_manager.dev_tools);
+  world.LoadMap(MapId::World, scene_manager.dev_tools.Settings());
 }
 
 void Game::Update() {
@@ -50,9 +51,10 @@ void Game::UpdateGame() {
   UpdateWalkTarget(registry, deltaTime);
   UpdatePlayerInput(registry, world.GetMap());
   UpdateMovement(registry, deltaTime);
-  UpdateMovementAndCollisions(registry, world.GetMap(), deltaTime, scene_manager.dev_tools.colliders);
+  UpdateMovementAndCollisions(registry, world.GetMap(), deltaTime, scene_manager.dev_tools.Settings().colliders);
   UpdateMovementAnimations(registry);
   UpdateAnimations(registry, deltaTime);
+  HandleMapTransitions(registry, world.GetMap(), player);
 
   AnimateTMX(world.GetMap().tmx_map);
 
@@ -67,7 +69,7 @@ void Game::UpdateGame() {
   };
   camera.offset = {static_cast<float>(GetScreenWidth()) / 2.0f, static_cast<float>(GetScreenHeight()) / 2.0f};
 
-  scene_manager.dev_tools.entity_colliders = registry.view<Collider>().size();
+  scene_manager.dev_tools.Settings().entity_colliders = static_cast<int>(registry.view<Collider>().size());
 }
 
 void Game::Draw() {
@@ -83,7 +85,7 @@ void Game::Draw() {
 
   EndMode2D();
 
-  auto &dev_tools = scene_manager.dev_tools;
+  auto &dev_tools = scene_manager.dev_tools.Settings();
   if (dev_tools.enabled) {
     const auto &[pos] = registry.get<Position>(player);
     ImGui::Begin("Player");
@@ -101,50 +103,19 @@ void Game::Draw() {
     ImGui::Checkbox("Draw colliders", &dev_tools.draw_colliders);
     ImGui::Checkbox("Draw grid map", &dev_tools.draw_grid_map);
     ImGui::End();
+
+    ImGui::Begin("Map transitions");
+    ImGui::Checkbox("Draw map transitions", &dev_tools.draw_map_transitions);
+    ImGui::End();
   }
 
   DrawUI();
 }
 
 void Game::DrawDevHelpers() {
-  if (scene_manager.dev_tools.draw_colliders) {
-    for (const auto &[points, obj_bounds]: world.GetMap().colliders) {
-      if (auto bounds = obj_bounds) {
-        DrawRectangleLinesEx(*bounds, .5f, ORANGE);
-      } else {
-        if (points.size() < 2) {
-          continue;
-        }
-
-        DrawLineStrip(points.data(), static_cast<int>(points.size()), ORANGE);
-        DrawLineV(points.back(), points.front(), ORANGE);
-      }
-    }
-
-    for (const auto &collider: registry.view<Collider, Position>()) {
-      const auto &pos = registry.get<Position>(collider);
-      const auto &col = registry.get<Collider>(collider);
-
-      Rectangle bounds = GetBounds(pos, col);
-
-      bounds.x = std::round(bounds.x);
-      bounds.y = std::round(bounds.y);
-      bounds.width = std::round(bounds.width);
-      bounds.height = std::round(bounds.height);
-
-      DrawRectangleLinesEx(bounds, .5f, ORANGE);
-    }
-  }
-
-  if (scene_manager.dev_tools.draw_grid_map) {
-    for (int x = 0; x <= world.GetMap().width; x += 16) {
-      DrawLine(x, 0, x, static_cast<int>(world.GetMap().height), BLUE);
-    }
-
-    for (int y = 0; y <= world.GetMap().height; y += 16) {
-      DrawLine(0, y, static_cast<int>(world.GetMap().width), y, BLUE);
-    }
-  }
+  scene_manager.dev_tools.DrawColliderBounds(world, registry);
+  scene_manager.dev_tools.DrawGridMap(world);
+  scene_manager.dev_tools.DrawMapTransitions(world);
 }
 
 void Game::DrawGameUI() {

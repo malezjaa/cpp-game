@@ -29,7 +29,7 @@ void SceneManager::SwitchTo(const SceneType type) {
 
 void SceneManager::Update() {
   if (IsKeyPressed(KEY_F1)) {
-    dev_tools.enabled = !dev_tools.enabled;
+    dev_tools.Settings().enabled = !dev_tools.Settings().enabled;
   }
   CurrentScene().Update();
 }
@@ -47,7 +47,7 @@ void SceneManager::Draw() {
   BeginDrawing();
   rlImGuiBegin();
 
-  if (dev_tools.enabled) {
+  if (dev_tools.Settings().enabled) {
     DrawDevTools();
   }
 

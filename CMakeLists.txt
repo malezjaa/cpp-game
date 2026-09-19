@@ -58,7 +58,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(magic_enum)
 
-find_package(EnTT CONFIG REQUIRED)
+find_package(EnTT CONFIG QUIET)
+if (NOT EnTT_FOUND)
+    FetchContent_Declare(
+            EnTT
+            GIT_REPOSITORY https://github.com/skypjack/entt.git
+            GIT_TAG v3.15.0
+            GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(EnTT)
+endif ()
 
 set(SOURCES src/main.cpp
         src/Player.cpp
@@ -75,7 +84,7 @@ set(SOURCES src/main.cpp
         src/items/ItemRegistry.h
         src/utils.cpp
         src/utils.h
-        src/ecs/Components.h
+        src/ecs/components.h
         src/ecs/systems.cpp
         src/ecs/systems.h
         src/scenes/SceneManager.cpp
@@ -87,7 +96,7 @@ set(SOURCES src/main.cpp
         src/ui/UIManager.h
         src/scenes/Credits.h
         src/world/World.h
-        src/world/map.h
+        src/world/Map.h
         src/world/tiles.h
         src/world/World.cpp
         src/ui/Alert.cpp
@@ -101,12 +110,12 @@ set(SOURCES src/main.cpp
         src/hud/HealthBar.cpp
         src/hud/HealthBar.h
         src/hud/HealthBar.cpp
-        src/npc/NPC.cpp
-        src/npc/NPC.h
+        src/npc/Npc.cpp
+        src/npc/Npc.h
         src/animations.cpp
         src/animations.h
-        src/npc/NPCRegistry.cpp
-        src/npc/NPCRegistry.h
+        src/npc/NpcRegistry.cpp
+        src/npc/NpcRegistry.h
         src/npc/NpcDefinition.cpp
         src/npc/NpcDefinition.h
         src/npc/nametags.cpp

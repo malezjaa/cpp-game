@@ -1,6 +1,8 @@
 #ifndef INC_2D_GAME_INVENTORY_H
 #define INC_2D_GAME_INVENTORY_H
+#include <cstdint>
 #include <optional>
+#include <vector>
 
 #include "Textures.h"
 #include "items/Item.h"

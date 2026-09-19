@@ -1,7 +1,7 @@
 #include "animations.h"
 #include <cstddef>
 
-#include "ecs/Components.h"
+#include "ecs/components.h"
 
 AnimationClip MakeClip(const float frameWidth, const float frameHeight, const std::size_t frameCount,
                        const float frameDuration) {
